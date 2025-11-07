@@ -44,4 +44,17 @@ public class AlgorithmServiceTest
             Assert.That(result[arrayIndex], Is.EqualTo(expected[arrayIndex]));
         }
     }
+
+    [TestCase(new[] { 10, 15 }, new[] { 10, 10 }, 5)]
+    [TestCase(new[] { 2, 4, 6, 10 }, new[] { 1, 5, 7, 9 }, 2)]
+    [TestCase(new[] { 10, 20, 40, 100 }, new[] { 9, 18, 40, 200 }, 3)]
+    [TestCase(new[] { 10, 20, 40, 100 }, new[] { 1, 2, 30, 50 }, 87)]
+    public void GetTotalPriceWithDiscounts_ShouldReturnCorrectTotalPrice(int[] prices, int[]  discounts, int expected)
+    {
+        // Act
+        var result = _service.GetTotalPriceWithDiscounts(prices, discounts);
+        
+        // Assert
+        Assert.That(result, Is.EqualTo(expected));
+    }
 }

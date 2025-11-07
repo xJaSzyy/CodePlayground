@@ -6,8 +6,14 @@ class Program
     private static async Task Main()
     {
         var algorithmService = new AlgorithmService();
+
+        var columnTitle = algorithmService.GetColumnTitleByColumnNumber(24568);
+        Console.WriteLine($"Column title: {columnTitle};");
         
         var arrayLeaders = algorithmService.GetArrayLeaders(new[] { 16, 17, 4, 3, 5, 2 });
-        Console.WriteLine(arrayLeaders.ToFormattedString());
+        Console.WriteLine($"Array leaders: {arrayLeaders.ToFormattedString()};");
+
+        var totalPriceWithDiscounts = algorithmService.GetTotalPriceWithDiscounts(new[] { 10, 15 }, new[] { 10, 10 });
+        Console.WriteLine($"Total price: {totalPriceWithDiscounts};");
     }
 }

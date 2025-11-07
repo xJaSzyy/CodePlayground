@@ -57,4 +57,22 @@ public class AlgorithmService : IAlgorithmService
 
         return result.ToArray();
     }
+
+    public int GetTotalPriceWithDiscounts(int[] prices, int[] discounts)
+    {
+        if (prices.Length != discounts.Length)
+        {
+            return -1;
+        }
+
+        var result = 0;
+        
+        for (var arrayIndex = 0; arrayIndex < prices.Length; arrayIndex++)
+        {
+            var price = Math.Max(prices[arrayIndex] - discounts[arrayIndex], 0);
+            result += price;
+        }
+
+        return result;
+    }
 }
