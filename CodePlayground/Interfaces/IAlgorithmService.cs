@@ -7,4 +7,6 @@ public interface IAlgorithmService
     public int[] GetArrayLeaders(int[] array);
 
     public int GetTotalPriceWithDiscounts(int[] prices, int[] discounts);
+
+    public bool IsPositiveDominant(int[] numbers);
 }

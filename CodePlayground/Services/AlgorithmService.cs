@@ -65,14 +65,14 @@ public class AlgorithmService : IAlgorithmService
             return -1;
         }
 
-        var result = 0;
-        
-        for (var arrayIndex = 0; arrayIndex < prices.Length; arrayIndex++)
-        {
-            var price = Math.Max(prices[arrayIndex] - discounts[arrayIndex], 0);
-            result += price;
-        }
+        return prices.Select((price, arrayIndex) => Math.Max(price - discounts[arrayIndex], 0)).Sum();
+    }
 
-        return result;
+    public bool IsPositiveDominant(int[] numbers)
+    {
+        var positiveCount = numbers.Distinct().Count(number => number >= 0);
+        var negativeCount = numbers.Distinct().Count() - positiveCount;
+        
+        return positiveCount > negativeCount;
     }
 }

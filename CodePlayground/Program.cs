@@ -15,5 +15,8 @@ class Program
 
         var totalPriceWithDiscounts = algorithmService.GetTotalPriceWithDiscounts(new[] { 10, 15 }, new[] { 10, 10 });
         Console.WriteLine($"Total price: {totalPriceWithDiscounts};");
+
+        var isPositiveDominant = algorithmService.IsPositiveDominant(new[] { 1, 2, 3, -3, -4 });
+        Console.WriteLine($"Is positive dominant? {isPositiveDominant};");
     }
 }

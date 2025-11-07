@@ -57,4 +57,18 @@ public class AlgorithmServiceTest
         // Assert
         Assert.That(result, Is.EqualTo(expected));
     }
+
+    [TestCase(new[] { 1, 2, 3, -3, -4 }, true)]
+    [TestCase(new[] { 1, 1, 2, 2, 3, 3, -4, -4 }, true)]
+    [TestCase(new[] { 1, -1, -2, -3, -4 }, false)]
+    [TestCase(new[] { 10, 1, -2, -2, -3, -4 }, false)]
+    [TestCase(new[] { 1, 2, 3, -3, -4, -5 }, false)]
+    public void IsPositiveDominant(int[] input, bool expected)
+    {
+        // Act
+        var result = _service.IsPositiveDominant(input);
+        
+        // Assert
+        Assert.That(result, Is.EqualTo(expected));
+    }
 }
