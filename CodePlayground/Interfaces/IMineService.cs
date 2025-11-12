@@ -35,4 +35,40 @@ public interface IMineService
     /// <returns></returns>
     public DryCementMixtureConsumptionResult CalculateDryCementMixtureConsumptionForExplosiveIsolationBridge(double crossSectionArea,
         double minimumThickness);
+
+    /// <summary>
+    /// Расчет массы отходов стальных сварочных электродов в метрах в год
+    /// </summary>
+    /// <param name="electrodesUsedMass">Количество использованных электродов, кг/год</param>
+    /// <param name="wasteNormCoefficient">Норматив образования огарков электродов от их расхода, 15%</param>
+    /// <returns></returns>
+    public double CalculateWeldingElectrodeWasteMass(double electrodesUsedMass, double wasteNormCoefficient);
+
+    /// <summary>
+    /// Расчет массы сварочного шлака
+    /// </summary>
+    /// <param name="electrodesUsedMass">Количество использованных электродов, кг/ год</param>
+    /// <returns></returns>
+    public double CalculateWeldingSlagWasteMass(double electrodesUsedMass);
+
+    /// <summary>
+    /// Расчет массы тары из черных металлов, загрязненной лакокрасочными материалами (менее 5%)
+    /// </summary>
+    /// <param name="annualRawMaterialConsumption">Годовой расход сырья i-ого вида, кг</param>
+    /// <param name="rawMaterialPackageWeight">Вес сырья i-ого вида в упаковке, кг</param>
+    /// <param name="emptyPackageWeight">Вес пустой упаковки из-под сырья i-ого вида, кг</param>
+    /// <returns></returns>
+    public double CalculatePaintContaminatedMetalWasteMass(double annualRawMaterialConsumption,
+        double rawMaterialPackageWeight, double emptyPackageWeight);
+
+    /// <summary>
+    /// Расчет массы лакокрасочных инструментов (кисти, валики), загрязненных лакокрасочными материалами (менее 5%)
+    /// </summary>
+    /// <param name="acetoneContentPercent">Содержание ацетона, %</param>
+    /// <param name="paintMaterialContentPercent">Содержание ЛКМ, %</param>
+    /// <param name="toolCount">Количество инструментов одного вида, шт</param>
+    /// <param name="toolWeightTons">Вес инструмента одного вида, т</param>
+    /// <returns></returns>
+    public double CalculatePaintContaminatedToolsWasteMass(double acetoneContentPercent,
+        double paintMaterialContentPercent, double toolCount, double toolWeightTons);
 }

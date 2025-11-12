@@ -47,8 +47,8 @@ public class MineService : IMineService
         }
         
         var calculatedThickness = Math.Max(bendingStrengthThickness, anchoringStrengthThickness); 
-        calculatedThickness = Math.Max(2, calculatedThickness);
-        calculatedThickness = Math.Min(calculatedThickness, 5);
+        calculatedThickness = Math.Max(2d, calculatedThickness);
+        calculatedThickness = Math.Min(calculatedThickness, 5d);
 
         return new MinimumThicknessResult()
         {
@@ -71,4 +71,40 @@ public class MineService : IMineService
             TotalDryCementMixtureConsumption = Math.Round(totalDryCementMixtureConsumption, 1)
         };
     }
+
+    #region Оценка потенциальных негативных экологических последствий консервации/ликвидации предприятия при обращении с отходами производства
+
+    public double CalculateWeldingElectrodeWasteMass(double electrodesUsedMass, double wasteNormCoefficient)
+    {
+        var electrodeWasteMass = electrodesUsedMass * wasteNormCoefficient * 1e-5;
+
+        return Math.Round(electrodeWasteMass, 3);
+    }
+    
+    public double CalculateWeldingSlagWasteMass(double electrodesUsedMass)
+    {
+        var slagWasteMass = electrodesUsedMass / 1000 * 0.1d;
+
+        return Math.Round(slagWasteMass, 3);
+    }
+    
+    public double CalculatePaintContaminatedMetalWasteMass(double annualRawMaterialConsumption,
+        double rawMaterialPackageWeight, double emptyPackageWeight)
+    {
+        var contaminatedMetalWasteMass =
+            annualRawMaterialConsumption / rawMaterialPackageWeight * emptyPackageWeight * 1e-3;
+
+        return Math.Round(contaminatedMetalWasteMass, 3);
+    }
+    
+    public double CalculatePaintContaminatedToolsWasteMass(double acetoneContentPercent,
+        double paintMaterialContentPercent, double toolCount, double toolWeightTons)
+    {
+        var contaminatedToolsWasteMass = toolCount * toolWeightTons / 100 *
+                                         (100 + acetoneContentPercent + paintMaterialContentPercent);
+
+        return Math.Round(contaminatedToolsWasteMass, 5);
+    }
+
+    #endregion
 }

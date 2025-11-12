@@ -87,4 +87,31 @@ public class MineServiceTest
             Assert.That(dryCementMixtureConsumptionResult.TotalDryCementMixtureConsumption, Is.EqualTo(expectedTotalDryCementMixtureConsumption));
         });
     }
+
+    [TestCase(298, 15, 0.045d, 0.030d, 
+        2100, 5.0d, 0.3d, 0.126d,
+        3, 5, 10, 0.0003d, 0.00324)]
+    public void DryMethodMineShaftConservation(double electrodesUsedMass, double wasteNormCoefficient,
+        double expectedElectrodeWasteMass,
+        double expectedSlagWasteMass, double annualRawMaterialConsumption,
+        double rawMaterialPackageWeight, double emptyPackageWeight, double expectedContaminatedMetalWasteMass,
+        double acetoneContentPercent, double paintMaterialContentPercent, double toolCount, double toolWeightTons, double expectedContaminatedToolsWasteMass)
+    {
+        // Act
+        var electrodeWasteMass =
+            _service.CalculateWeldingElectrodeWasteMass(electrodesUsedMass, wasteNormCoefficient);
+
+        var slagWasteMass = _service.CalculateWeldingSlagWasteMass(electrodesUsedMass);
+        var contaminatedMetalWasteMass = _service.CalculatePaintContaminatedMetalWasteMass(annualRawMaterialConsumption, rawMaterialPackageWeight, emptyPackageWeight);
+        var contaminatedToolsWasteMass = _service.CalculatePaintContaminatedToolsWasteMass(acetoneContentPercent, paintMaterialContentPercent, toolCount, toolWeightTons);
+
+        // Assert
+        Assert.Multiple(() =>
+        {
+            Assert.That(electrodeWasteMass, Is.EqualTo(expectedElectrodeWasteMass));
+            Assert.That(slagWasteMass, Is.EqualTo(expectedSlagWasteMass));
+            Assert.That(contaminatedMetalWasteMass, Is.EqualTo(expectedContaminatedMetalWasteMass));
+            Assert.That(contaminatedToolsWasteMass, Is.EqualTo(expectedContaminatedToolsWasteMass));
+        });
+    }
 }
