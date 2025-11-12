@@ -90,4 +90,16 @@ public interface IMineService
     /// <returns></returns>
     public double CalculateAnnualSolidWasteBasedOnWorkers(int numberOfWorkers, double solidWasteNormPerWorker,
         int conservationDurationYears, double solidWasteDensity);
+
+    /// <summary>
+    /// Расчет отходов осадков механической очистки
+    /// </summary>
+    /// <param name="annualWasteWaterVolume">Годовой расход сточных вод, м3/год</param>
+    /// <param name="suspendedSolidsConcentrationBeforeTreatment">Концентрация взвешенных веществ до очистных сооружений, мг/л</param>
+    /// <param name="suspendedSolidsConcentrationAfterTreatment">Концентрация взвешенных веществ после очистных сооружений, мг/л</param>
+    /// <param name="sludgeMoistureContent">Влажность осадка, %</param>
+    /// <returns></returns>
+    public double CalculateMechanicalTreatmentSedimentWaste(double annualWasteWaterVolume,
+        double suspendedSolidsConcentrationBeforeTreatment, double suspendedSolidsConcentrationAfterTreatment,
+        double sludgeMoistureContent);
 }

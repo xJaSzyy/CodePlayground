@@ -52,7 +52,7 @@ public class MineServiceTest
         1.32d, 1.38d, 
         2.0d, 35.6d, 37.4d, 
         41.1d)]
-    public void EndToEnd(double width, double height, double pressureAmplitude, double atmosphericPressure, 
+    public void CalculationParametersPipeFreeExplosionProofInsulatingJumpersTest(double width, double height, double pressureAmplitude, double atmosphericPressure, 
         double dynamicCoefficient, double compressiveStrengthNorm, double tensileStrengthNorm,
         double adhesionStrengthNorm, double safetyFactor, double crossSectionArea,
         double expectedOverpressure, double expectedReflectedPressure, double expectedEquivalentPressure,
@@ -91,17 +91,22 @@ public class MineServiceTest
     [TestCase(298, 15, 0.045d, 0.030d,
         2100, 5.0d, 0.3d, 0.126d,
         3, 5, 10, 0.0003d, 0.00324,
-        1497.60d, 5d, 7.488d, 
-        58, 0.22d, 1, 0.2d, 2.552d)]
-    public void DryMethodMineShaftConservation(double electrodesUsedMass, double wasteNormCoefficient,
+        1497.60d, 5d, 7.488d,
+        58, 0.22d, 1, 0.2d, 2.552d, 
+        1085105d, 2368.00d, 94.72d, 
+        30d, 3523.925d)]
+    public void CalculationWasteGenerationVolumesTest(double electrodesUsedMass, double wasteNormCoefficient,
         double expectedElectrodeWasteMass,
         double expectedSlagWasteMass, double annualRawMaterialConsumption,
         double rawMaterialPackageWeight, double emptyPackageWeight, double expectedContaminatedMetalWasteMass,
         double acetoneContentPercent, double paintMaterialContentPercent, double toolCount, double toolWeightTons,
         double expectedContaminatedToolsWasteMass,
-        double sanitaryCleaningArea, double wasteNormPerSquareMeter, double expectedAnnualWasteNorm, 
+        double sanitaryCleaningArea, double wasteNormPerSquareMeter, double expectedAnnualWasteNorm,
         int numberOfWorkers, double solidWasteNormPerWorker,
-        int conservationDurationYears, double solidWasteDensity, double expectedAnnualSolidWaste)
+        int conservationDurationYears, double solidWasteDensity, double expectedAnnualSolidWaste,
+        double annualWasteWaterVolume, double suspendedSolidsConcentrationBeforeTreatment,
+        double suspendedSolidsConcentrationAfterTreatment,
+        double sludgeMoistureContent, double expectedTreatmentSedimentWaste)
     {
         // Act
         var electrodeWasteMass = _service.CalculateWeldingElectrodeWasteMass(electrodesUsedMass, wasteNormCoefficient);
@@ -112,7 +117,11 @@ public class MineServiceTest
             paintMaterialContentPercent, toolCount, toolWeightTons);
         var annualWasteNorm =
             _service.CalculateAnnualWasteNormForSiteCleaning(sanitaryCleaningArea, wasteNormPerSquareMeter);
-        var annualSolidWaste = _service.CalculateAnnualSolidWasteBasedOnWorkers(numberOfWorkers, solidWasteNormPerWorker, conservationDurationYears, solidWasteDensity);
+        var annualSolidWaste = _service.CalculateAnnualSolidWasteBasedOnWorkers(numberOfWorkers,
+            solidWasteNormPerWorker, conservationDurationYears, solidWasteDensity);
+        var treatmentSedimentWaste = _service.CalculateMechanicalTreatmentSedimentWaste(annualWasteWaterVolume,
+            suspendedSolidsConcentrationBeforeTreatment, suspendedSolidsConcentrationAfterTreatment,
+            sludgeMoistureContent);
 
         // Assert
         Assert.Multiple(() =>
@@ -123,6 +132,7 @@ public class MineServiceTest
             Assert.That(contaminatedToolsWasteMass, Is.EqualTo(expectedContaminatedToolsWasteMass));
             Assert.That(annualWasteNorm, Is.EqualTo(expectedAnnualWasteNorm));
             Assert.That(annualSolidWaste, Is.EqualTo(expectedAnnualSolidWaste));
+            Assert.That(treatmentSedimentWaste, Is.EqualTo(expectedTreatmentSedimentWaste));
         });
     }
 }
