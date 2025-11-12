@@ -28,6 +28,14 @@ public class MineServiceTest
         1.16d, 1.19d, 
         2.0d, 32.0d, 
         33.6d, 37.0d)]
+    
+    [TestCase(4.64d, 3.74d, 0.3d, 0.1d, 
+        1.5d, 20.0d, 4.5d, 
+        0.9d, 0.9d, 15.8d,
+        0.2d, 0.67d, 1.0d,
+        1.21d, 1.28d, 
+        2.0d, 31.6d, 
+        33.2d, 36.5d)]
     public void EndToEnd(double width, double height, double pressureAmplitude, double atmosphericPressure, 
         double dynamicCoefficient, double compressiveStrengthNorm, double tensileStrengthNorm,
         double adhesionStrengthNorm, double safetyFactor, double crossSectionArea,
