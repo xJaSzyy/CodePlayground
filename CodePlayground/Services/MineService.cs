@@ -106,5 +106,19 @@ public class MineService : IMineService
         return Math.Round(contaminatedToolsWasteMass, 5);
     }
 
+    public double CalculateAnnualWasteNormForSiteCleaning(double sanitaryCleaningArea, double wasteNormPerSquareMeter)
+    {
+        var annualWasteNorm = sanitaryCleaningArea * wasteNormPerSquareMeter * 1e-3; 
+
+        return Math.Round(annualWasteNorm, 3);
+    }
+
+    public double CalculateAnnualSolidWasteBasedOnWorkers(int numberOfWorkers, double solidWasteNormPerWorker, int conservationDurationYears, double solidWasteDensity)
+    {
+        var annualSolidWaste = numberOfWorkers * solidWasteNormPerWorker * conservationDurationYears * solidWasteDensity;
+
+        return Math.Round(annualSolidWaste, 3);;
+    }
+
     #endregion
 }

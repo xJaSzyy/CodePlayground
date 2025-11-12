@@ -71,4 +71,23 @@ public interface IMineService
     /// <returns></returns>
     public double CalculatePaintContaminatedToolsWasteMass(double acetoneContentPercent,
         double paintMaterialContentPercent, double toolCount, double toolWeightTons);
+
+    /// <summary>
+    /// Расчет годового норматива образования отходов от уборки территории промплощадки предприятия 
+    /// </summary>
+    /// <param name="sanitaryCleaningArea">Площадь территории, подвергаемой санитарной уборке, м2</param>
+    /// <param name="wasteNormPerSquareMeter">Удельная норма образования смета с 1 м2 территории, кг/м2</param>
+    /// <returns></returns>
+    public double CalculateAnnualWasteNormForSiteCleaning(double sanitaryCleaningArea, double wasteNormPerSquareMeter);
+
+    /// <summary>
+    /// Расчет мусора от офисных и бытовых помещений организаций (исключая крупногабаритный)
+    /// </summary>
+    /// <param name="numberOfWorkers">Максимальное единовременное число трудящихся, чел</param>
+    /// <param name="solidWasteNormPerWorker">удельная норма образования твердых коммунальных/бытовых отходов на 1 работающего, м3/год</param>
+    /// <param name="conservationDurationYears">продолжительность консервации, лет</param>
+    /// <param name="solidWasteDensity">бъемный вес ТКО, т/м3</param>
+    /// <returns></returns>
+    public double CalculateAnnualSolidWasteBasedOnWorkers(int numberOfWorkers, double solidWasteNormPerWorker,
+        int conservationDurationYears, double solidWasteDensity);
 }
