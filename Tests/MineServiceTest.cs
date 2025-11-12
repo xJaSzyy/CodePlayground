@@ -36,6 +36,22 @@ public class MineServiceTest
         1.21d, 1.28d, 
         2.0d, 31.6d, 
         33.2d, 36.5d)]
+    
+    [TestCase(4.60d, 3.75d, 0.3d, 0.1d, 
+        1.5d, 20.0d, 4.5d, 
+        0.9d, 0.9d, 15.0d,
+        0.2d, 0.67d, 1.0d,
+        1.20d, 1.28d, 
+        2.0d, 30.0d, 31.5d, 
+        34.7d)]
+    
+    [TestCase(3.96d, 5.10d, 0.3d, 0.1d, 
+        1.5d, 20.0d, 4.5d, 
+        0.9d, 0.9d, 17.8d,
+        0.2d, 0.67d, 1.0d,
+        1.32d, 1.38d, 
+        2.0d, 35.6d, 37.4d, 
+        41.1d)]
     public void EndToEnd(double width, double height, double pressureAmplitude, double atmosphericPressure, 
         double dynamicCoefficient, double compressiveStrengthNorm, double tensileStrengthNorm,
         double adhesionStrengthNorm, double safetyFactor, double crossSectionArea,
@@ -56,16 +72,19 @@ public class MineServiceTest
         var dryCementMixtureConsumptionResult =
             _service.CalculateDryCementMixtureConsumptionForExplosiveIsolationBridge(crossSectionArea,
                 minimumThicknessResult.MinimumThickness);
-        
+
         // Assert
-        Assert.That(blastWavePressureResult.Overpressure, Is.EqualTo(expectedOverpressure));
-        Assert.That(blastWavePressureResult.ReflectedPressure, Is.EqualTo(expectedReflectedPressure));
-        Assert.That(blastWavePressureResult.EquivalentPressure, Is.EqualTo(expectedEquivalentPressure));
-        Assert.That(minimumThicknessResult.BendingStrengthThickness, Is.EqualTo(expectedBendingStrengthThickness));
-        Assert.That(minimumThicknessResult.AnchoringStrengthThickness, Is.EqualTo(expectedAnchoringStrengthThickness));
-        Assert.That(minimumThicknessResult.MinimumThickness, Is.EqualTo(expectedMinimumThickness));
-        Assert.That(dryCementMixtureConsumptionResult.Volume, Is.EqualTo(expectedVolume));
-        Assert.That(dryCementMixtureConsumptionResult.DryCementMixtureConsumption, Is.EqualTo(expectedDryCementMixtureConsumption));
-        Assert.That(dryCementMixtureConsumptionResult.TotalDryCementMixtureConsumption, Is.EqualTo(expectedTotalDryCementMixtureConsumption));
+        Assert.Multiple(() =>
+        {
+            Assert.That(blastWavePressureResult.Overpressure, Is.EqualTo(expectedOverpressure));
+            Assert.That(blastWavePressureResult.ReflectedPressure, Is.EqualTo(expectedReflectedPressure));
+            Assert.That(blastWavePressureResult.EquivalentPressure, Is.EqualTo(expectedEquivalentPressure));
+            Assert.That(minimumThicknessResult.BendingStrengthThickness, Is.EqualTo(expectedBendingStrengthThickness));
+            Assert.That(minimumThicknessResult.AnchoringStrengthThickness, Is.EqualTo(expectedAnchoringStrengthThickness));
+            Assert.That(minimumThicknessResult.MinimumThickness, Is.EqualTo(expectedMinimumThickness));
+            Assert.That(dryCementMixtureConsumptionResult.Volume, Is.EqualTo(expectedVolume));
+            Assert.That(dryCementMixtureConsumptionResult.DryCementMixtureConsumption, Is.EqualTo(expectedDryCementMixtureConsumption));
+            Assert.That(dryCementMixtureConsumptionResult.TotalDryCementMixtureConsumption, Is.EqualTo(expectedTotalDryCementMixtureConsumption));
+        });
     }
 }
