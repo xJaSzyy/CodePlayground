@@ -7,9 +7,9 @@ public class MineService : IMineService
 {
     public BlastWavePressureResult CalculateEquivalentBlastWavePressureForExplosiveIsolationBridge(double pressureAmplitude, double atmosphericPressure, double dynamicCoefficient)
     {
-        double overpressure = pressureAmplitude - atmosphericPressure; 
-        double reflectedPressure = overpressure * (2 + 6 / (1 + 7 * atmosphericPressure / overpressure));
-        double equivalentPressure = reflectedPressure * dynamicCoefficient; 
+        var overpressure = pressureAmplitude - atmosphericPressure; 
+        var reflectedPressure = overpressure * (2 + 6 / (1 + 7 * atmosphericPressure / overpressure));
+        var equivalentPressure = reflectedPressure * dynamicCoefficient; 
 
         return new BlastWavePressureResult()
         {
@@ -58,12 +58,17 @@ public class MineService : IMineService
         };
     }
     
-    public double CalculateDryCementMixtureConsumptionForExplosiveIsolationBridge(double crossSectionArea, double minimumThickness)
+    public DryCementMixtureConsumptionResult CalculateDryCementMixtureConsumptionForExplosiveIsolationBridge(double crossSectionArea, double minimumThickness)
     {
-        double volume = crossSectionArea * minimumThickness; // объем возводимой безврубовой взрывоустойчивой изолирующей перемычки, м3.
-        double dryCementMixtureConsumption = 1.05d * volume; // расход сухой цементной смеси «УГМ-П» на возведение безврубовой взрывоустойчивой перемычки
-        double totalDryCementMixtureConsumption = 1.1d * dryCementMixtureConsumption; // итоговый расход сухой цементной смеси «УГМ-П» на возведение проектируемой безврубовой взрывоустойчивой изолирующей перемычки
+        var volume = crossSectionArea * minimumThickness; 
+        var dryCementMixtureConsumption = 1.05d * volume; 
+        var totalDryCementMixtureConsumption = 1.1d * dryCementMixtureConsumption; 
 
-        return Math.Round(totalDryCementMixtureConsumption, 1);
+        return new DryCementMixtureConsumptionResult()
+        {
+            Volume = Math.Round(volume, 2),
+            DryCementMixtureConsumption = Math.Round(dryCementMixtureConsumption, 1),
+            TotalDryCementMixtureConsumption = Math.Round(totalDryCementMixtureConsumption, 1)
+        };
     }
 }

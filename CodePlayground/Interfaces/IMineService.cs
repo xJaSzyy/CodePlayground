@@ -33,6 +33,6 @@ public interface IMineService
     /// <param name="crossSectionArea">Площадь сечения выработки вчерне, в которой устанавливается изолирующая перемычка, м2</param>
     /// <param name="minimumThickness">Минимальная расчетная толщина изолирующей перемычки, м</param>
     /// <returns></returns>
-    public double CalculateDryCementMixtureConsumptionForExplosiveIsolationBridge(double crossSectionArea,
+    public DryCementMixtureConsumptionResult CalculateDryCementMixtureConsumptionForExplosiveIsolationBridge(double crossSectionArea,
         double minimumThickness);
 }
