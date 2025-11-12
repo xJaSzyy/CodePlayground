@@ -17,17 +17,20 @@ public class MineServiceTest
         1.5d, 20.0d, 4.5d, 
         0.9d, 0.9d, 17.6d,
         0.2d, 0.67d, 1.0d,
+        1.24d, 1.28d, 
         2.0d, 40.7d)]
     
     [TestCase(4.61d, 3.33d, 0.3d, 0.1d, 
         1.5d, 20.0d, 4.5d, 
         0.9d, 0.9d, 16.0d,
         0.2d, 0.67d, 1.0d,
+        1.16d, 1.19d, 
         2.0d, 37.0d)]
     public void EndToEnd(double width, double height, double pressureAmplitude, double atmosphericPressure, 
         double dynamicCoefficient, double compressiveStrengthNorm, double tensileStrengthNorm,
         double adhesionStrengthNorm, double safetyFactor, double crossSectionArea,
         double expectedOverpressure, double expectedReflectedPressure, double expectedEquivalentPressure,
+        double expectedBendingStrengthThickness, double expectedAnchoringStrengthThickness,
         double expectedMinimumThickness, double expectedTotalDryCementMixtureConsumption)
     {
         // Act
@@ -35,19 +38,19 @@ public class MineServiceTest
             _service.CalculateEquivalentBlastWavePressureForExplosiveIsolationBridge(pressureAmplitude,
                 atmosphericPressure, dynamicCoefficient);
         
-        var minimumThickness = _service.CalculateMinimumThicknessForExplosiveIsolationBridge(width, height,
+        var minimumThicknessResult = _service.CalculateMinimumThicknessForExplosiveIsolationBridge(width, height,
             blastWavePressureResult.EquivalentPressure,
             compressiveStrengthNorm, tensileStrengthNorm, adhesionStrengthNorm, safetyFactor);
         
         var totalDryCementMixtureConsumption =
             _service.CalculateDryCementMixtureConsumptionForExplosiveIsolationBridge(crossSectionArea,
-                minimumThickness);
+                minimumThicknessResult.MinimumThickness);
         
         // Assert
         Assert.That(blastWavePressureResult.Overpressure, Is.EqualTo(expectedOverpressure));
         Assert.That(blastWavePressureResult.ReflectedPressure, Is.EqualTo(expectedReflectedPressure));
         Assert.That(blastWavePressureResult.EquivalentPressure, Is.EqualTo(expectedEquivalentPressure));
-        Assert.That(minimumThickness, Is.EqualTo(expectedMinimumThickness));
+        Assert.That(minimumThicknessResult.MinimumThickness, Is.EqualTo(expectedMinimumThickness));
         Assert.That(totalDryCementMixtureConsumption, Is.EqualTo(expectedTotalDryCementMixtureConsumption));
     }
 }

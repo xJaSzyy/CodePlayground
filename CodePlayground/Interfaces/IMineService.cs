@@ -24,7 +24,7 @@ public interface IMineService
     /// <param name="adhesionStrengthNorm">нормативная адгезионная прочность</param>
     /// <param name="safetyFactor">коэффициент запаса прочности для материала перемычки (изменяется в пределах 0,8-1,0)</param>
     /// <returns></returns>
-    public double CalculateMinimumThicknessForExplosiveIsolationBridge(double width, double height, double equivalentPressure, 
+    public MinimumThicknessResult CalculateMinimumThicknessForExplosiveIsolationBridge(double width, double height, double equivalentPressure, 
         double compressiveStrengthNorm, double tensileStrengthNorm, double adhesionStrengthNorm, double safetyFactor);
 
     /// <summary>

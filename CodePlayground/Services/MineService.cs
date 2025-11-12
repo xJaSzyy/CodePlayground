@@ -19,12 +19,12 @@ public class MineService : IMineService
         };
     }
     
-    public double CalculateMinimumThicknessForExplosiveIsolationBridge(double width, double height, double equivalentPressure, 
+    public MinimumThicknessResult CalculateMinimumThicknessForExplosiveIsolationBridge(double width, double height, double equivalentPressure, 
         double compressiveStrengthNorm, double tensileStrengthNorm, double adhesionStrengthNorm, double safetyFactor)
     {
         var shearStrengthNorm = .24d * compressiveStrengthNorm; // нормативное сопротивление на сдвиг
 
-        double bendingStrengthThickness = 0; // толщина плиты безврубовой перемычки, обеспечивающая ее прочность на изгиб под действием эквивалентного давления, м;
+        double bendingStrengthThickness = 0; 
 
         if (width < height)
         {
@@ -35,7 +35,7 @@ public class MineService : IMineService
             bendingStrengthThickness = height * Math.Sqrt((equivalentPressure * (3 - 2 * Math.Pow(height / width, 2))) / (4 * tensileStrengthNorm * safetyFactor));
         }
         
-        double anchoringStrengthThickness = 0; // толщина плиты безврубовой перемычки, обеспечивающая прочность ее закрепления по контуру, м.
+        double anchoringStrengthThickness = 0; 
 
         if (adhesionStrengthNorm < shearStrengthNorm)
         {
@@ -46,11 +46,16 @@ public class MineService : IMineService
             anchoringStrengthThickness = (equivalentPressure * height * width) / (2 * (height + width) * shearStrengthNorm * safetyFactor);
         }
         
-        var calculatedThickness = Math.Max(bendingStrengthThickness, anchoringStrengthThickness); // расчетная толщина безврубовой перемычки, м;
+        var calculatedThickness = Math.Max(bendingStrengthThickness, anchoringStrengthThickness); 
         calculatedThickness = Math.Max(2, calculatedThickness);
         calculatedThickness = Math.Min(calculatedThickness, 5);
-        
-        return Math.Round(calculatedThickness, 2);
+
+        return new MinimumThicknessResult()
+        {
+            BendingStrengthThickness = Math.Round(bendingStrengthThickness, 2),
+            AnchoringStrengthThickness = Math.Round(anchoringStrengthThickness, 2),
+            MinimumThickness = Math.Round(calculatedThickness, 2)
+        };
     }
     
     public double CalculateDryCementMixtureConsumptionForExplosiveIsolationBridge(double crossSectionArea, double minimumThickness)
