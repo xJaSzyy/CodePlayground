@@ -102,4 +102,15 @@ public interface IMineService
     public double CalculateMechanicalTreatmentSedimentWaste(double annualWasteWaterVolume,
         double suspendedSolidsConcentrationBeforeTreatment, double suspendedSolidsConcentrationAfterTreatment,
         double sludgeMoistureContent);
+
+    /// <summary>
+    /// Расчет массы отработанных аккумуляторов с электролитом
+    /// </summary>
+    /// <param name="numberOfVehicles">Количество автомашин, снабженных аккумуляторами, шт</param>
+    /// <param name="batteriesPerVehicle">Количество аккумуляторов в автотранспорте, шт</param>
+    /// <param name="batteryMassStandard">Норматив образования отхода, масса аккумуляторной батареи с электролитом, кг</param>
+    /// <param name="batteryLifespanYears">Нормативный год службы аккумуляторной батареи, лет</param>
+    /// <returns></returns>
+    public double CalculateUsedBatteryMass(int numberOfVehicles, int batteriesPerVehicle, double batteryMassStandard,
+        int batteryLifespanYears);
 }

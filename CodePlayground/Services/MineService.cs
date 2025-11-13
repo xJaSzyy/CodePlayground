@@ -145,6 +145,13 @@ public class MineService : IMineService
 
         return Math.Round(treatmentSedimentWaste, 3);
     }
+    
+    public double CalculateUsedBatteryMass(int numberOfVehicles, int batteriesPerVehicle, double batteryMassStandard, int batteryLifespanYears)
+    {
+        var massUsedBatteriesWithElectrolyte = numberOfVehicles * batteriesPerVehicle * batteryMassStandard / batteryLifespanYears * 1e-3;
+
+        return Math.Round(massUsedBatteriesWithElectrolyte, 3);
+    }
 
     #endregion
 }

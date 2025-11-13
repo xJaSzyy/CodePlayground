@@ -1,4 +1,5 @@
 using CodePlayground.Interfaces;
+using CodePlayground.Models;
 using CodePlayground.Services;
 
 namespace Tests;
@@ -171,5 +172,23 @@ public class MineServiceTest
 
         // Assert
         Assert.That(treatmentSedimentWaste, Is.EqualTo(expectedTreatmentSedimentWaste));
+    }
+
+    [TestCase(5, 1, 60d, 2, 0.150d)]
+    [TestCase(4, 1, 51d, 2, 0.102d)]
+    [TestCase(9, 1, 32.5d, 2, 0.146d)]
+    [TestCase(9, 1, 60d, 2, 0.270d)]
+    [TestCase(9, 1, 76.4d, 2, 0.344d)]
+    [TestCase(9, 1, 60d, 3, 0.180d)]
+    [TestCase(2, 2, 20.1d, 2, 0.040d)]
+    [TestCase(2, 1, 60d, 2, 0.060d)]
+    [TestCase(1, 1, 60d, 2, 0.030d)]
+    public void CalculateUsedBatteryMass_ShouldReturnCorrectValue(int numberOfVehicles, int batteriesPerVehicle, double batteryMassStandard, int batteryLifespanYears, double expectedMassUsedBatteries)
+    {
+        // Act
+        var massUsedBatteries = _service.CalculateUsedBatteryMass(numberOfVehicles, batteriesPerVehicle, batteryMassStandard, batteryLifespanYears);
+
+        // Assert
+        Assert.That(massUsedBatteries, Is.EqualTo(expectedMassUsedBatteries));
     }
 }
