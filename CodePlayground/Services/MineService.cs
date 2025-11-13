@@ -6,7 +6,7 @@ namespace CodePlayground.Services;
 public class MineService : IMineService
 {
     #region Расчет параметров безврубовых взрывоустойчивых изолирующих перемычек
-    
+
     public BlastWavePressureResult CalculateEquivalentBlastWavePressureForExplosiveIsolationBridge(
         double pressureAmplitude, double atmosphericPressure, double dynamicCoefficient)
     {
@@ -80,7 +80,7 @@ public class MineService : IMineService
             TotalDryCementMixtureConsumption = Math.Round(totalDryCementMixtureConsumption, 1)
         };
     }
-    
+
     #endregion
 
     #region Расчет объемов образования отходов
@@ -133,7 +133,7 @@ public class MineService : IMineService
         return Math.Round(annualSolidWaste, 3);
         ;
     }
-    
+
     public double CalculateMechanicalTreatmentSedimentWaste(double annualWasteWaterVolume,
         double suspendedSolidsConcentrationBeforeTreatment, double suspendedSolidsConcentrationAfterTreatment,
         double sludgeMoistureContent)
@@ -145,12 +145,23 @@ public class MineService : IMineService
 
         return Math.Round(treatmentSedimentWaste, 3);
     }
-    
-    public double CalculateUsedBatteryMass(int numberOfVehicles, int batteriesPerVehicle, double batteryMassStandard, int batteryLifespanYears)
+
+    public double CalculateUsedBatteryMass(int numberOfVehicles, int batteriesPerVehicle, double batteryMassStandard,
+        int batteryLifespanYears)
     {
-        var massUsedBatteriesWithElectrolyte = numberOfVehicles * batteriesPerVehicle * batteryMassStandard / batteryLifespanYears * 1e-3;
+        var massUsedBatteriesWithElectrolyte =
+            numberOfVehicles * batteriesPerVehicle * batteryMassStandard / batteryLifespanYears * 1e-3;
 
         return Math.Round(massUsedBatteriesWithElectrolyte, 3);
+    }
+
+    public double CalculateMineralMotorOilsMass(int vehicleCount, double oilVolume, double averageAnnualMileage,
+        double mileageNorm, double oilDrainCompletenessCoefficient = 0.9d, double usedOilDensity = 0.9d)
+    {
+        var mineralMotorOilsMass = ((vehicleCount * oilVolume * averageAnnualMileage) /
+            (mileageNorm * oilDrainCompletenessCoefficient * usedOilDensity)) * 1e-3;
+
+        return Math.Round(mineralMotorOilsMass, 6);
     }
 
     #endregion

@@ -113,4 +113,17 @@ public interface IMineService
     /// <returns></returns>
     public double CalculateUsedBatteryMass(int numberOfVehicles, int batteriesPerVehicle, double batteryMassStandard,
         int batteryLifespanYears);
+
+    /// <summary>
+    /// Расчет массы минеральных моторных масел
+    /// </summary>
+    /// <param name="vehicleCount">Количество транспорта i-марки, шт</param>
+    /// <param name="oilVolume">Объем масла, заливаемого в автомашину i-марки транспорта при ТО, л</param>
+    /// <param name="averageAnnualMileage">Средний годовой пробег i-марки транспорта, тыс. км/период (моточас/год)</param>
+    /// <param name="mileageNorm">Норма пробега подвижного состава i-марки транспорта, тыс. км/период (моточас/год)</param>
+    /// <param name="oilDrainCompletenessCoefficient">Коэффициент полноты слива масла</param>
+    /// <param name="usedOilDensity">Плотность отработанного масла, кг/л</param>
+    /// <returns></returns>
+    public double CalculateMineralMotorOilsMass(int vehicleCount, double oilVolume, double averageAnnualMileage,
+        double mileageNorm, double oilDrainCompletenessCoefficient = 0.9d, double usedOilDensity = 0.9d);
 }

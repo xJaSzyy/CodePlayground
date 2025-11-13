@@ -191,4 +191,22 @@ public class MineServiceTest
         // Assert
         Assert.That(massUsedBatteries, Is.EqualTo(expectedMassUsedBatteries));
     }
+
+    [TestCase(5, 29d, 550d, 1000d, 0.064598d)]
+    [TestCase(4, 22d, 550d, 1000d, 0.039204d)]
+    [TestCase(9, 19d, 550d, 1000d, 0.076181d)]
+    [TestCase(9, 25d, 550d, 1000d, 0.100238d)]
+    [TestCase(9, 33.2d, 550d, 1000d, 0.133115d)]
+    [TestCase(9, 31d, 550d, 1000d, 0.124295d)]
+    [TestCase(2, 30.1d, 550d, 1000d, 0.026819d)]
+    [TestCase(2, 19.5d, 550d, 1000d, 0.017375d)]
+    [TestCase(1, 30d, 550d, 1000d, 0.013365d)]
+    public void CalculateMineralMotorOilsMass_ShouldReturnCorrectValue(int vehicleCount, double oilVolume, double averageAnnualMileage, double mileageNorm, double expectedMineralMotorOilsMass)
+    {
+        // Act
+        var mineralMotorOilsMass = _service.CalculateMineralMotorOilsMass(vehicleCount, oilVolume, averageAnnualMileage, mileageNorm);
+
+        // Assert
+        Assert.That(mineralMotorOilsMass, Is.EqualTo(expectedMineralMotorOilsMass));
+    }
 }
