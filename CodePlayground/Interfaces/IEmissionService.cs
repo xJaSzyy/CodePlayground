@@ -1,3 +1,5 @@
+using CodePlayground.Enums;
+
 namespace CodePlayground.Interfaces;
 
 public interface IEmissionService
@@ -33,4 +35,14 @@ public interface IEmissionService
         float averageDrainTime, float oilAmountInAutumnWinter, float oilAmountInSpringSummer,
         float fillingConcentrationInAutumnWinter, float fillingConcentrationInSpringSummer,
         float pollutantConcentration, int precision = 6);
+
+    /// <summary>
+    /// Расчет выбросов загрязняющих веществ при механической обработке металлов
+    /// </summary>
+    /// <param name="type">Тип станка для обработки металла</param>
+    /// <param name="annualEquipmentOperatingTimeFund">Годовой фонд времени работы оборудования, ч</param>
+    /// <param name="precision">Количество знаков после запятой</param>
+    /// <returns></returns>
+    public (float, float) CalculateDuringMetalMachiningEmissions(MetalMachiningMachineType type,
+        float annualEquipmentOperatingTimeFund, int precision = 6);
 }

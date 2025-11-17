@@ -1,3 +1,4 @@
+using CodePlayground.Enums;
 using CodePlayground.Interfaces;
 using CodePlayground.Services;
 
@@ -47,6 +48,20 @@ public class EmissionServiceTest
         var result = _service.CalculateReservoirsEmissions(maximumConcentration, drainedVolume, averageDrainTime,
             oilAmountInAutumnWinter, oilAmountInSpringSummer, fillingConcentrationInAutumnWinter,
             fillingConcentrationInSpringSummer, pollutantConcentration);
+
+        // Assert
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Item1, Is.EqualTo(expectedMaximumEmission));
+            Assert.That(result.Item2, Is.EqualTo(expectedGrossEmission));
+        });
+    }
+
+    [TestCase(MetalMachiningMachineType.Drilling, 365, 0.0014f, 0.001840f)]
+    public void CalculateDuringMetalMachiningEmissions_ShouldReturnCorrectValues(MetalMachiningMachineType type, float annualEquipmentOperatingTimeFund, float expectedMaximumEmission, float expectedGrossEmission)
+    {
+        // Act
+        var result = _service.CalculateDuringMetalMachiningEmissions(type, annualEquipmentOperatingTimeFund);
 
         // Assert
         Assert.Multiple(() =>

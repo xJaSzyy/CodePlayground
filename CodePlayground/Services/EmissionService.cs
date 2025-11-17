@@ -1,3 +1,4 @@
+using CodePlayground.Enums;
 using CodePlayground.Interfaces;
 
 namespace CodePlayground.Services;
@@ -31,4 +32,28 @@ public class EmissionService : IEmissionService
 
         return ((float)Math.Round(finalMaximumEmission, precision), (float)Math.Round(finalGrossEmission, precision));
     }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="type">Тип станка для обработки металла</param>
+    /// <param name="annualEquipmentOperatingTimeFund">Годовой фонд времени работы оборудования, ч</param>
+    /// <param name="precision"></param>
+    /// <returns></returns>
+    public (float, float) CalculateDuringMetalMachiningEmissions(MetalMachiningMachineType type, float annualEquipmentOperatingTimeFund, int precision = 6)
+    {
+        var specificDustEmissions = _specificDustEmissionsByType.GetValueOrDefault(type, 0f);
+        
+        var maximumEmission = 0.2f * specificDustEmissions;
+        var grossEmission = 0.2f * 3.6f * specificDustEmissions * annualEquipmentOperatingTimeFund * 1e-3f;
+
+        return ((float)Math.Round(maximumEmission, precision), (float)Math.Round(grossEmission, precision));
+    }
+
+    private readonly Dictionary<MetalMachiningMachineType, float> _specificDustEmissionsByType = new()
+    {
+        { MetalMachiningMachineType.Drilling, 0.007f },
+        { MetalMachiningMachineType.Milling, 0.097f },
+        { MetalMachiningMachineType.Cutting, 0.203f }
+    };
 }
