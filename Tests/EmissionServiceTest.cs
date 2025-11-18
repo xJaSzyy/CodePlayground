@@ -1,3 +1,4 @@
+using CodePlayground;
 using CodePlayground.Enums;
 using CodePlayground.Interfaces;
 using CodePlayground.Services;
@@ -14,26 +15,32 @@ public class EmissionServiceTest
         _service = new EmissionService();
     }
 
-    [TestCase(7.5f, 1, 365, 1, 1, 0.002604f, 0.003422f)]
-    [TestCase(1f, 1, 365, 1, 1, 0.000347f, 0.000456f)]
-    [TestCase(0.14f, 1, 365, 1, 1, 0.000049f, 0.000064f)]
-    [TestCase(0.112f, 1, 365, 1, 1, 0.000039f, 0.000051f)]
-    [TestCase(0.0182f, 1, 365, 1, 1, 0.000006f, 0.000008f)]
-    [TestCase(0.036f, 1, 365, 1, 1, 0.000012f, 0.000016f)]
-    public void CalculateGasolineGeneratorEmissions_ShouldReturnCorrectValues(float specificEmission,
+    [TestCase(Pollutant.CO, 1, 365, 1, 1, 0.002604f, 0.003422f)]
+    [TestCase(Pollutant.CH, 1, 365, 1, 1, 0.000347f, 0.000456f)]
+    [TestCase(Pollutant.NO2, 1, 365, 1, 1, 0.000039f, 0.000051f)]
+    [TestCase(Pollutant.NO, 1, 365, 1, 1, 0.000006f, 0.000008f)]
+    [TestCase(Pollutant.SO2, 1, 365, 1, 1, 0.000012f, 0.000016f)]
+    public void CalculateGasolineGeneratorEmissions_ShouldReturnCorrectValues(Pollutant pollutant,
         int workHoursPerDay,
         int workDaysPerYear, int generatorCount, int sameGeneratorCount, float expectedMaximumEmission,
         float expectedGrossEmission)
     {
+        // Arrange
+        var info = DataStorage.PollutantInfos.First(i => i.Pollutant == pollutant);
+        
         // Act
-        var result = _service.CalculateGasolineGeneratorEmissions(specificEmission, workHoursPerDay, workDaysPerYear,
+        var result = _service.CalculateGasolineGeneratorEmissions(pollutant, workHoursPerDay, workDaysPerYear,
             generatorCount, sameGeneratorCount);
 
         // Assert
         Assert.Multiple(() =>
         {
-            Assert.That(result.Item1, Is.EqualTo(expectedMaximumEmission));
-            Assert.That(result.Item2, Is.EqualTo(expectedGrossEmission));
+            Assert.That(result.PollutantInfo.Code, Is.EqualTo(info.Code));
+            Assert.That(result.PollutantInfo.Name, Is.EqualTo(info.Name));
+            Assert.That(result.PollutantInfo.Pollutant, Is.EqualTo(info.Pollutant));
+            Assert.That(result.PollutantInfo.SpecificEmission, Is.EqualTo(info.SpecificEmission));
+            Assert.That((float)Math.Round(result.MaximumEmission, 6), Is.EqualTo(expectedMaximumEmission));
+            Assert.That((float)Math.Round(result.GrossEmission, 6), Is.EqualTo(expectedGrossEmission));
         });
     }
 
