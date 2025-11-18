@@ -1,18 +1,27 @@
 using CodePlayground.Enums;
 using CodePlayground.Interfaces;
+using CodePlayground.Models;
 
 namespace CodePlayground.Services;
 
 public class EmissionService : IEmissionService
 {
-    public (float, float) CalculateGasolineGeneratorEmissions(float specificEmission, int workHoursPerDay,
-        int workDaysPerYear, int generatorCount, int sameGeneratorCount, float moveSpeed = 5f, int precision = 6)
+    public GasolineGeneratorEmissions CalculateGasolineGeneratorEmissions(Pollutant pollutant, int workHoursPerDay,
+        int workDaysPerYear, int generatorCount, int sameGeneratorCount)
     {
-        var maximumSingle = 0.25f * specificEmission * moveSpeed * sameGeneratorCount / 3600f;
-        var grossEmission = 0.25f * specificEmission * moveSpeed * workHoursPerDay * workDaysPerYear * generatorCount *
-                            1e-6f;
+        var pollutantInfo = DataStorage.PollutantInfos.First(i => i.Pollutant == pollutant);
+        
+        var maximumEmission = 0.25f * pollutantInfo.SpecificEmission * 5f * sameGeneratorCount / 3600f;
+        var grossEmission = 0.25f * pollutantInfo.SpecificEmission * 5f * workHoursPerDay * workDaysPerYear * generatorCount * 1e-6f;
 
-        return ((float)Math.Round(maximumSingle, precision), (float)Math.Round(grossEmission, precision));
+        var result = new GasolineGeneratorEmissions
+        {
+            PollutantInfo = pollutantInfo,
+            MaximumEmission = maximumEmission,
+            GrossEmission = grossEmission
+        };
+        
+        return result;
     }
 
     public (float, float) CalculateReservoirsEmissions(float maximumConcentration, float drainedVolume,
@@ -32,14 +41,7 @@ public class EmissionService : IEmissionService
 
         return ((float)Math.Round(finalMaximumEmission, precision), (float)Math.Round(finalGrossEmission, precision));
     }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="type">Тип станка для обработки металла</param>
-    /// <param name="annualEquipmentOperatingTimeFund">Годовой фонд времени работы оборудования, ч</param>
-    /// <param name="precision"></param>
-    /// <returns></returns>
+    
     public (float, float) CalculateDuringMetalMachiningEmissions(MetalMachiningMachineType type, float annualEquipmentOperatingTimeFund, int precision = 6)
     {
         var specificDustEmissions = _specificDustEmissionsByType.GetValueOrDefault(type, 0f);

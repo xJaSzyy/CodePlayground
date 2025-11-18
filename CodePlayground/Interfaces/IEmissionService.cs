@@ -1,4 +1,5 @@
 using CodePlayground.Enums;
+using CodePlayground.Models;
 
 namespace CodePlayground.Interfaces;
 
@@ -7,16 +8,14 @@ public interface IEmissionService
     /// <summary>
     /// Расчет выбросов загрязняющих веществ от бензогенератора
     /// </summary>
-    /// <param name="specificEmission">Удельный выброс, г/км (табл. 2.5)</param>
+    /// <param name="pollutant">Загрязняющее вещество</param>
     /// <param name="workHoursPerDay">Время работы в день, ч</param>
     /// <param name="workDaysPerYear">Кол-во рабочих дней в году</param>
     /// <param name="generatorCount">Кол-во генераторов, шт</param>
     /// <param name="sameGeneratorCount">Кол-во одновременно работающих генераторов, шт</param>
-    /// <param name="moveSpeed">Скорость движения, км/ч</param>
-    /// <param name="precision">Количество знаков после запятой</param>
     /// <returns></returns>
-    public (float, float) CalculateGasolineGeneratorEmissions(float specificEmission, int workHoursPerDay,
-        int workDaysPerYear, int generatorCount, int sameGeneratorCount, float moveSpeed = 5f, int precision = 6);
+    public GasolineGeneratorEmissions CalculateGasolineGeneratorEmissions(Pollutant pollutant, int workHoursPerDay,
+        int workDaysPerYear, int generatorCount, int sameGeneratorCount);
 
     /// <summary>
     /// Расчет выбросов загрязняющих веществ от резервуаров

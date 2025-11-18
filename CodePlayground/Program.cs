@@ -1,22 +1,33 @@
-﻿using CodePlayground.Extensions;
+﻿using ClosedXML.Excel;
+using CodePlayground.Enums;
+using CodePlayground.Models;
 using CodePlayground.Services;
 
 class Program
 {
     private static async Task Main()
     {
-        var algorithmService = new AlgorithmService();
-
-        var columnTitle = algorithmService.GetColumnTitleByColumnNumber(24568);
-        Console.WriteLine($"Column title: {columnTitle};");
+        var emissionService = new EmissionService();
+        var outputService = new OutputService();
         
-        var arrayLeaders = algorithmService.GetArrayLeaders(new[] { 16, 17, 4, 3, 5, 2 });
-        Console.WriteLine($"Array leaders: {arrayLeaders.ToFormattedString()};");
-
-        var totalPriceWithDiscounts = algorithmService.GetTotalPriceWithDiscounts(new[] { 10, 15 }, new[] { 10, 10 });
-        Console.WriteLine($"Total price: {totalPriceWithDiscounts};");
-
-        var isPositiveDominant = algorithmService.IsPositiveDominant(new[] { 1, 2, 3, -3, -4 });
-        Console.WriteLine($"Is positive dominant? {isPositiveDominant};");
+        var gasolineGeneratorEmissionsReport = new GasolineGeneratorEmissionsReport
+        {
+            SelectionSource = "001",
+            PollutionSource = "0007",
+            WorkHoursPerDay = 1,
+            WorkDaysPerYear = 365,
+            GeneratorCount = 1,
+            SameGeneratorCount = 1,
+            Emissions = new List<GasolineGeneratorEmissions>()
+            {
+                emissionService.CalculateGasolineGeneratorEmissions(Pollutant.CO, 1, 365, 1, 1),
+                emissionService.CalculateGasolineGeneratorEmissions(Pollutant.CH, 1, 365, 1, 1),
+                emissionService.CalculateGasolineGeneratorEmissions(Pollutant.NO2, 1, 365, 1, 1),
+                emissionService.CalculateGasolineGeneratorEmissions(Pollutant.NO, 1, 365, 1, 1),
+                emissionService.CalculateGasolineGeneratorEmissions(Pollutant.SO2, 1, 365, 1, 1),
+            }
+        };
+        
+        outputService.CreateGasolineGeneratorEmissionsReport(gasolineGeneratorEmissionsReport);
     }
 }
