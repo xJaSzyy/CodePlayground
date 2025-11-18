@@ -16,10 +16,10 @@ public class GasolineGeneratorEmissionsReport
 
     public int SameGeneratorCount { get; set; }
 
-    public List<GasolineGeneratorEmissions> Emissions { get; set; } = new();
+    public List<GasolineGeneratorEmissionsResult> Emissions { get; set; } = new();
 }
 
-public class GasolineGeneratorEmissions
+public class GasolineGeneratorEmissionsResult
 {
     public PollutantInfo PollutantInfo { get; set; } = null!;
 

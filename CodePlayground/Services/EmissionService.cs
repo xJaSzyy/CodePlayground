@@ -6,7 +6,7 @@ namespace CodePlayground.Services;
 
 public class EmissionService : IEmissionService
 {
-    public GasolineGeneratorEmissions CalculateGasolineGeneratorEmissions(Pollutant pollutant, int workHoursPerDay,
+    public GasolineGeneratorEmissionsResult CalculateGasolineGeneratorEmissions(Pollutant pollutant, int workHoursPerDay,
         int workDaysPerYear, int generatorCount, int sameGeneratorCount)
     {
         var pollutantInfo = DataStorage.PollutantInfos.First(i => i.Pollutant == pollutant);
@@ -14,7 +14,7 @@ public class EmissionService : IEmissionService
         var maximumEmission = 0.25f * pollutantInfo.SpecificEmission * 5f * sameGeneratorCount / 3600f;
         var grossEmission = 0.25f * pollutantInfo.SpecificEmission * 5f * workHoursPerDay * workDaysPerYear * generatorCount * 1e-6f;
 
-        var result = new GasolineGeneratorEmissions
+        var result = new GasolineGeneratorEmissionsResult
         {
             PollutantInfo = pollutantInfo,
             MaximumEmission = maximumEmission,

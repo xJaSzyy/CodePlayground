@@ -14,7 +14,7 @@ public interface IEmissionService
     /// <param name="generatorCount">Кол-во генераторов, шт</param>
     /// <param name="sameGeneratorCount">Кол-во одновременно работающих генераторов, шт</param>
     /// <returns></returns>
-    public GasolineGeneratorEmissions CalculateGasolineGeneratorEmissions(Pollutant pollutant, int workHoursPerDay,
+    public GasolineGeneratorEmissionsResult CalculateGasolineGeneratorEmissions(Pollutant pollutant, int workHoursPerDay,
         int workDaysPerYear, int generatorCount, int sameGeneratorCount);
 
     /// <summary>

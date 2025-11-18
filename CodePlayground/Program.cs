@@ -1,5 +1,4 @@
-﻿using ClosedXML.Excel;
-using CodePlayground.Enums;
+﻿using CodePlayground.Enums;
 using CodePlayground.Models;
 using CodePlayground.Services;
 
@@ -18,7 +17,7 @@ class Program
             WorkDaysPerYear = 365,
             GeneratorCount = 1,
             SameGeneratorCount = 1,
-            Emissions = new List<GasolineGeneratorEmissions>()
+            Emissions = new List<GasolineGeneratorEmissionsResult>
             {
                 emissionService.CalculateGasolineGeneratorEmissions(Pollutant.CO, 1, 365, 1, 1),
                 emissionService.CalculateGasolineGeneratorEmissions(Pollutant.CH, 1, 365, 1, 1),
