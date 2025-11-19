@@ -240,7 +240,7 @@ public class OutputService : IOutputService
         outputFile += $"/{fileName}.xlsx";
         
         var workbook = new XLWorkbook();
-        var worksheet = workbook.Worksheets.Add(fileName);
+        var worksheet = workbook.Worksheets.Add(fileName.Length > 31 ? fileName[..31] : fileName);
 
         var row = 1;
         
