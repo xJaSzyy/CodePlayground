@@ -59,22 +59,22 @@ public class EmissionServiceTest
         var vaporConcentration = DataStorage.VaporConcentration[reservoirType][climateZone][oilProduct];
 
         // Act
-        var result = _service.CalculateReservoirsEmissions(pollutant, vaporConcentration, autumnWinterOilAmount,
+        var result = _service.CalculateReservoirsEmissionsBatch(new List<Pollutant> { pollutant }, vaporConcentration, autumnWinterOilAmount,
             springSummerOilAmount, drainedVolume, averageDrainTime);
 
         // Assert
         Assert.Multiple(() =>
         {
-            Assert.That(result.PollutantInfo.Code, Is.EqualTo(info.Code));
-            Assert.That(result.PollutantInfo.Name, Is.EqualTo(info.Name));
-            Assert.That(result.PollutantInfo.ShortName, Is.EqualTo(info.ShortName));
-            Assert.That(result.PollutantInfo.Pollutant, Is.EqualTo(info.Pollutant));
-            Assert.That(result.PollutantInfo.SpecificEmission, Is.EqualTo(info.SpecificEmission));
-            Assert.That((float)Math.Round(result.MaxVaporEmission, 6), Is.EqualTo(maxVaporEmission));
-            Assert.That((float)Math.Round(result.AnnualInjectionEmissions, 6), Is.EqualTo(annualInjectionEmissions));
-            Assert.That((float)Math.Round(result.AnnualIrrigationEmissions, 6), Is.EqualTo(annualIrrigationEmissions));
-            Assert.That((float)Math.Round(result.MaximumEmission, 6), Is.EqualTo(expectedMaximumEmission));
-            Assert.That((float)Math.Round(result.GrossEmission, 6), Is.EqualTo(expectedGrossEmission));
+            Assert.That(result.First().PollutantInfo.Code, Is.EqualTo(info.Code));
+            Assert.That(result.First().PollutantInfo.Name, Is.EqualTo(info.Name));
+            Assert.That(result.First().PollutantInfo.ShortName, Is.EqualTo(info.ShortName));
+            Assert.That(result.First().PollutantInfo.Pollutant, Is.EqualTo(info.Pollutant));
+            Assert.That(result.First().PollutantInfo.SpecificEmission, Is.EqualTo(info.SpecificEmission));
+            Assert.That((float)Math.Round(result.First().MaxVaporEmission, 6), Is.EqualTo(maxVaporEmission));
+            Assert.That((float)Math.Round(result.First().AnnualInjectionEmissions, 6), Is.EqualTo(annualInjectionEmissions));
+            Assert.That((float)Math.Round(result.First().AnnualIrrigationEmissions, 6), Is.EqualTo(annualIrrigationEmissions));
+            Assert.That((float)Math.Round(result.First().MaximumEmission, 6), Is.EqualTo(expectedMaximumEmission));
+            Assert.That((float)Math.Round(result.First().GrossEmission, 6), Is.EqualTo(expectedGrossEmission));
         });
     }
 

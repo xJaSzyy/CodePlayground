@@ -19,14 +19,14 @@ public interface IEmissionService
     /// <summary>
     /// Расчет выбросов загрязняющих веществ от резервуаров
     /// </summary>
-    /// <param name="pollutant">Загрязняющее вещество</param>
+    /// <param name="pollutants">Список загрязняющих веществ</param>
     /// <param name="vaporConcentration">Концентрация паров нефтепродуктов в выбросах при заполнении резервуаров</param>
     /// <param name="autumnWinterOilAmount">Кол-во закачиваемого в резервуар нефтепродукта в осенне-зимний период, м3</param>
     /// <param name="springSummerOilAmount">Кол-во закачиваемого в резервуар нефтепродукта в весенне-летний период, м3</param>
     /// <param name="drainedVolume">Объем слитого нефтепродукта в резервуар, м3</param>
     /// <param name="averageDrainTime">Среднее время слива, с</param>
     /// <returns></returns>
-    public ReservoirsEmissionsResult CalculateReservoirsEmissions(Pollutant pollutant,
+    public List<ReservoirsEmissionsResult> CalculateReservoirsEmissionsBatch(List<Pollutant> pollutants,
         VaporConcentrationRecord vaporConcentration, float autumnWinterOilAmount, float springSummerOilAmount,
         float drainedVolume, float averageDrainTime = 1200f);
 

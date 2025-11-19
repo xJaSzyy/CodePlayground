@@ -41,19 +41,11 @@ class Program
             DrainedVolume = 150f,
             AverageDrainTime = 1200f,
         };
-        reservoirsEmissionsReport.VaporConcentration =
-            DataStorage.VaporConcentration[reservoirsEmissionsReport.ReservoirType][
-                reservoirsEmissionsReport.ClimateZone][reservoirsEmissionsReport.OilProduct];
-        reservoirsEmissionsReport.Emissions = new List<ReservoirsEmissionsResult>
-        {
-            emissionService.CalculateReservoirsEmissions(Pollutant.RPK240280,
-                reservoirsEmissionsReport.VaporConcentration, reservoirsEmissionsReport.AutumnWinterOilAmount,
-                reservoirsEmissionsReport.SpringSummerOilAmount, reservoirsEmissionsReport.DrainedVolume,
-                reservoirsEmissionsReport.AverageDrainTime),
-            emissionService.CalculateReservoirsEmissions(Pollutant.H2S, reservoirsEmissionsReport.VaporConcentration,
-                reservoirsEmissionsReport.AutumnWinterOilAmount, reservoirsEmissionsReport.SpringSummerOilAmount,
-                reservoirsEmissionsReport.DrainedVolume, reservoirsEmissionsReport.AverageDrainTime)
-        }.OrderBy(e => e.PollutantInfo.Code).ToList();
+        reservoirsEmissionsReport.VaporConcentration = DataStorage.VaporConcentration[reservoirsEmissionsReport.ReservoirType][reservoirsEmissionsReport.ClimateZone][reservoirsEmissionsReport.OilProduct];
+        reservoirsEmissionsReport.Emissions = emissionService.CalculateReservoirsEmissionsBatch(
+            new List<Pollutant> { Pollutant.RPK240280, Pollutant.H2S }, reservoirsEmissionsReport.VaporConcentration,
+            reservoirsEmissionsReport.AutumnWinterOilAmount, reservoirsEmissionsReport.SpringSummerOilAmount,
+            reservoirsEmissionsReport.DrainedVolume, reservoirsEmissionsReport.AverageDrainTime);
 
         outputService.CreateReservoirsEmissionsReport(reservoirsEmissionsReport, "/home/xjasz/Desktop");
     }

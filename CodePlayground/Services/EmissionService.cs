@@ -20,32 +20,19 @@ public class EmissionService : IEmissionService
 
         return result.OrderBy(e => e.PollutantInfo.Code).ToList();
     }
-    
-    public ReservoirsEmissionsResult CalculateReservoirsEmissions(Pollutant pollutant,
+
+    public List<ReservoirsEmissionsResult> CalculateReservoirsEmissionsBatch(List<Pollutant> pollutants,
         VaporConcentrationRecord vaporConcentration, float autumnWinterOilAmount, float springSummerOilAmount,
         float drainedVolume, float averageDrainTime = 1200f)
     {
-        var pollutantInfo = DataStorage.PollutantInfos.First(i => i.Pollutant == pollutant);
+        var result = new List<ReservoirsEmissionsResult>();
 
-        var annualInjectionEmissions = (vaporConcentration.AutumnWinterVaporConcentration * autumnWinterOilAmount +
-                                        vaporConcentration.SpringSummerVaporConcentration * springSummerOilAmount) *
-                                       1e-6f;
-        var annualIrrigationEmissions = 50f * (autumnWinterOilAmount + springSummerOilAmount) * 1e-6f;
-
-        var maxVaporEmission = (vaporConcentration.MaxVaporConcentration * drainedVolume) / averageDrainTime;
-        var grossEmission = annualInjectionEmissions + annualIrrigationEmissions;
-
-        var result = new ReservoirsEmissionsResult
+        foreach (var pollutant in pollutants)
         {
-            PollutantInfo = pollutantInfo,
-            MaxVaporEmission = maxVaporEmission,
-            AnnualInjectionEmissions = annualInjectionEmissions,
-            AnnualIrrigationEmissions = annualIrrigationEmissions,
-            MaximumEmission = maxVaporEmission * pollutantInfo.SpecificEmission * 1e-2f,
-            GrossEmission = grossEmission * pollutantInfo.SpecificEmission * 1e-2f,
-        };
+            result.Add(CalculateReservoirsEmissions(pollutant, vaporConcentration, autumnWinterOilAmount, springSummerOilAmount, drainedVolume, averageDrainTime));
+        }
 
-        return result;
+        return result.OrderBy(e => e.PollutantInfo.Code).ToList();
     }
 
     public (float, float) CalculateDuringMetalMachiningEmissions(MetalMachiningMachineType type,
@@ -77,6 +64,33 @@ public class EmissionService : IEmissionService
             PollutantInfo = pollutantInfo,
             MaximumEmission = maximumEmission,
             GrossEmission = grossEmission
+        };
+
+        return result;
+    }
+    
+    private ReservoirsEmissionsResult CalculateReservoirsEmissions(Pollutant pollutant,
+        VaporConcentrationRecord vaporConcentration, float autumnWinterOilAmount, float springSummerOilAmount,
+        float drainedVolume, float averageDrainTime = 1200f)
+    {
+        var pollutantInfo = DataStorage.PollutantInfos.First(i => i.Pollutant == pollutant);
+
+        var annualInjectionEmissions = (vaporConcentration.AutumnWinterVaporConcentration * autumnWinterOilAmount +
+                                        vaporConcentration.SpringSummerVaporConcentration * springSummerOilAmount) *
+                                       1e-6f;
+        var annualIrrigationEmissions = 50f * (autumnWinterOilAmount + springSummerOilAmount) * 1e-6f;
+
+        var maxVaporEmission = (vaporConcentration.MaxVaporConcentration * drainedVolume) / averageDrainTime;
+        var grossEmission = annualInjectionEmissions + annualIrrigationEmissions;
+
+        var result = new ReservoirsEmissionsResult
+        {
+            PollutantInfo = pollutantInfo,
+            MaxVaporEmission = maxVaporEmission,
+            AnnualInjectionEmissions = annualInjectionEmissions,
+            AnnualIrrigationEmissions = annualIrrigationEmissions,
+            MaximumEmission = maxVaporEmission * pollutantInfo.SpecificEmission * 1e-2f,
+            GrossEmission = grossEmission * pollutantInfo.SpecificEmission * 1e-2f,
         };
 
         return result;

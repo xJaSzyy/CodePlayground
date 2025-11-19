@@ -223,10 +223,10 @@ public class OutputService : IOutputService
         foreach (var emission in report.Emissions)
         {
             row++;
-            SetCell(worksheet, $"A{row}", emission.PollutantInfo.Code);
-            SetCell(worksheet, $"B{row}:D{row}", emission.PollutantInfo.Name);
-            SetCell(worksheet, $"E{row}:F{row}", emission.MaximumEmission);
-            SetCell(worksheet, $"G{row}:H{row}", emission.GrossEmission);
+            SetCell(worksheet, $"A{row}", emission.PollutantInfo.Code, horizontal: XLAlignmentHorizontalValues.Center);
+            SetCell(worksheet, $"B{row}:D{row}", emission.PollutantInfo.Name, horizontal: XLAlignmentHorizontalValues.Center);
+            SetCell(worksheet, $"E{row}:F{row}", emission.MaximumEmission, horizontal: XLAlignmentHorizontalValues.Center);
+            SetCell(worksheet, $"G{row}:H{row}", emission.GrossEmission, horizontal: XLAlignmentHorizontalValues.Center);
         }
         
         SetBorder(worksheet, $"A{row - report.Emissions.Count}:H{row}");
