@@ -8,9 +8,10 @@ namespace CodePlayground.Services;
 
 public class OutputService : IOutputService
 {
-    public void CreateGasolineGeneratorEmissionsReport(GasolineGeneratorEmissionsReport report)
+    public void CreateGasolineGeneratorEmissionsReport(GasolineGeneratorEmissionsReport report, string outputFile)
     {
         var fileName = $"ИЗА {report.PollutionSource}_{report.SelectionSource} Бензогенератор";
+        outputFile += $"/{fileName}.xlsx";
         
         var workbook = new XLWorkbook();
         var worksheet = workbook.Worksheets.Add(fileName);
@@ -105,12 +106,13 @@ public class OutputService : IOutputService
             SetCell(worksheet, $"H{row}:I{row}", emission.GrossEmission, horizontal: XLAlignmentHorizontalValues.Center);
         }
 
-        workbook.SaveAs($"/home/xjasz/Desktop/{fileName}.xlsx");
+        workbook.SaveAs(outputFile);
     }
 
-    public void CreateReservoirsEmissionsReport(ReservoirsEmissionsReport report)
+    public void CreateReservoirsEmissionsReport(ReservoirsEmissionsReport report, string outputFile)
     {
         var fileName = $"ИЗА {report.PollutionSource}_{report.SelectionSource} Резервуары";
+        outputFile += $"/{fileName}.xlsx";
         
         var workbook = new XLWorkbook();
         var worksheet = workbook.Worksheets.Add(fileName);
@@ -229,7 +231,7 @@ public class OutputService : IOutputService
         
         SetBorder(worksheet, $"A{row - report.Emissions.Count}:H{row}");
         
-        workbook.SaveAs($"/home/xjasz/Desktop/{fileName}.xlsx");
+        workbook.SaveAs(outputFile);
     }
 
     private static void SetCell(IXLWorksheet worksheet, string address, object value, bool bold = false, XLAlignmentHorizontalValues horizontal = XLAlignmentHorizontalValues.Left, string numberFormat = "0.######")

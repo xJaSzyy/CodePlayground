@@ -28,7 +28,7 @@ class Program
             }.OrderBy(e => e.PollutantInfo.Code).ToList()
         };
 
-        outputService.CreateGasolineGeneratorEmissionsReport(gasolineGeneratorEmissionsReport);
+        outputService.CreateGasolineGeneratorEmissionsReport(gasolineGeneratorEmissionsReport, "/home/xjasz/Desktop");
 
         var reservoirsEmissionsReport = new ReservoirsEmissionsReport
         {
@@ -52,6 +52,6 @@ class Program
             emissionService.CalculateReservoirsEmissions(Pollutant.H2S, reservoirsEmissionsReport.VaporConcentration, 100f, 50f, 150f)
         }.OrderBy(e => e.PollutantInfo.Code).ToList();
 
-        outputService.CreateReservoirsEmissionsReport(reservoirsEmissionsReport);
+        outputService.CreateReservoirsEmissionsReport(reservoirsEmissionsReport, "/home/xjasz/Desktop");
     }
 }

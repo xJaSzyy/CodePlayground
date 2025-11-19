@@ -2,6 +2,9 @@ using CodePlayground.Enums;
 
 namespace CodePlayground.Models;
 
+/// <summary>
+/// Отчет по расчету выбросов ЗВ от резервуаров (входные + выходные данные)
+/// </summary>
 public class ReservoirsEmissionsReport
 {
     /// <summary>
