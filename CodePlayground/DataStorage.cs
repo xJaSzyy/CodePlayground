@@ -58,6 +58,12 @@ public static class DataStorage
             ShortName = "дигидросульфид",
             Pollutant = Pollutant.H2S,
             SpecificEmission = 0.28f
+        },
+        new PollutantInfo
+        {
+            Code = 123,
+            Name = "Железо триоксид (железа оксид; железо сесквиоксид) /в пересчете на железо/",
+            Pollutant = Pollutant.Fe2O3
         }
     };
 

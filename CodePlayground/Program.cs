@@ -53,7 +53,12 @@ class Program
         {
             SelectionSource = "001",
             PollutionSource = "6002",
+            MetalMachiningMachineType = MetalMachiningMachineType.Drilling,
+            WorkDaysPerYear = 365,
+            MachiningMachineCount = 1,
+            SameMachiningMachineCount = 1
         };
+        duringMetalMachiningEmissionsReport.Result = emissionService.CalculateDuringMetalMachiningEmissions(duringMetalMachiningEmissionsReport.MetalMachiningMachineType, duringMetalMachiningEmissionsReport.WorkDaysPerYear);
         
         outputService.CreateDuringMetalMachiningEmissionsReport(duringMetalMachiningEmissionsReport, "/home/xjasz/Desktop");
     }

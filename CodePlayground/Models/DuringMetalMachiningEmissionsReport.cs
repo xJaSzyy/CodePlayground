@@ -1,3 +1,5 @@
+using CodePlayground.Enums;
+
 namespace CodePlayground.Models;
 
 /// <summary>
@@ -14,4 +16,29 @@ public class DuringMetalMachiningEmissionsReport
     /// Номер источника загрязнения
     /// </summary>
     public string PollutionSource { get; set; } = null!;
+    
+    /// <summary>
+    /// Тип станка для обработки металла
+    /// </summary>
+    public MetalMachiningMachineType MetalMachiningMachineType { get; set; }
+    
+    /// <summary>
+    /// Годовой фонд времени работы оборудования, ч
+    /// </summary>
+    public int WorkDaysPerYear { get; set; }
+    
+    /// <summary>
+    /// Число оборудования данного типа (n)
+    /// </summary>
+    public int MachiningMachineCount { get; set; }
+    
+    /// <summary>
+    /// Число оборудования данного типа работающего одновременно (n)
+    /// </summary>
+    public int SameMachiningMachineCount { get; set; }
+    
+    /// <summary>
+    /// Результат расчетов выбросов ЗВ при механической обработке металлов
+    /// </summary>
+    public EmissionsResult Result { get; set; } = new();
 }

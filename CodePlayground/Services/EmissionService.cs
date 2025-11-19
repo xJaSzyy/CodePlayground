@@ -41,15 +41,22 @@ public class EmissionService : IEmissionService
         return result;
     }
 
-    public (float, float) CalculateDuringMetalMachiningEmissions(MetalMachiningMachineType type,
-        float annualEquipmentOperatingTimeFund, int precision = 6)
+    public EmissionsResult CalculateDuringMetalMachiningEmissions(MetalMachiningMachineType metalMachiningMachineType, int workDaysPerYear)
     {
-        var specificDustEmissions = DataStorage.SpecificDustEmissionsByType.GetValueOrDefault(type, 0f);
+        var pollutantInfo = DataStorage.PollutantInfos.First(i => i.Pollutant == Pollutant.Fe2O3);
+        pollutantInfo.SpecificEmission = DataStorage.SpecificDustEmissionsByType.GetValueOrDefault(metalMachiningMachineType, 0f);
 
-        var maximumEmission = 0.2f * specificDustEmissions;
-        var grossEmission = 0.2f * 3.6f * specificDustEmissions * annualEquipmentOperatingTimeFund * 1e-3f;
+        var maximumEmission = 0.2f * pollutantInfo.SpecificEmission;
+        var grossEmission = 0.2f * 3.6f * pollutantInfo.SpecificEmission * workDaysPerYear * 1e-3f;
 
-        return ((float)Math.Round(maximumEmission, precision), (float)Math.Round(grossEmission, precision));
+        var result = new EmissionsResult
+        {
+            PollutantInfo = pollutantInfo,
+            MaximumEmission = maximumEmission,
+            GrossEmission = grossEmission
+        };
+        
+        return result;
     }
 
     #endregion

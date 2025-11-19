@@ -236,7 +236,7 @@ public class OutputService : IOutputService
 
     public void CreateDuringMetalMachiningEmissionsReport(DuringMetalMachiningEmissionsReport report, string outputFile)
     {
-        var fileName = $"ИЗА {report.PollutionSource}_{report.SelectionSource} Сверлильный станок";
+        var fileName = $"ИЗА {report.PollutionSource}_{report.SelectionSource} {report.MetalMachiningMachineType.GetDescription()}";
         outputFile += $"/{fileName}.xlsx";
         
         var workbook = new XLWorkbook();
@@ -245,14 +245,14 @@ public class OutputService : IOutputService
         var row = 1;
         
         SetCell(worksheet, $"A{row}:I{row}", "Расчет выбросов загрязняющих веществ при механической обработке металлов", true, XLAlignmentHorizontalValues.Center);
-        SetCell(worksheet, $"A{row + 2}:I{row + 2}", $"Источник загрязнения № {report.PollutionSource}, сверлильный станок", true);
+        SetCell(worksheet, $"A{row + 2}:I{row + 2}", $"Источник загрязнения № {report.PollutionSource}, {report.MetalMachiningMachineType.GetDescription().ToLower()}", true);
         SetCell(worksheet, $"A{row + 3}:I{row + 3}", $"Источник выделения № {report.SelectionSource}", true);
         SetCell(worksheet, $"A{row + 4}:I{row + 7}", "Литература: Методика расчета выделений (выбросов) загрязняющих веществ в атмосферу при механической обработке металлов (на основе удельных показателей) (утверждена приказом Госкомэкологии от 14.04.1997 \u2116 158)");
         row += 9;
         
         SetCell(worksheet, $"A{row}:I{row}", "Исходные данные", true);
         SetCell(worksheet, $"A{row + 1}:C{row + 1}", "Вид оборудования:");
-        SetCell(worksheet, $"D{row + 1}:I{row + 1}", "сверлильный станок");
+        SetCell(worksheet, $"D{row + 1}:I{row + 1}", report.MetalMachiningMachineType.GetDescription().ToLower());
         
         SetCell(worksheet, $"A{row + 2}:C{row + 2}", "Тип охлаждения:");
         SetCell(worksheet, $"D{row + 2}:I{row + 2}", "нет");
@@ -261,13 +261,13 @@ public class OutputService : IOutputService
         SetCell(worksheet, $"D{row + 3}:I{row + 3}", "сталь");
         
         SetCell(worksheet, $"A{row + 4}:C{row + 4}", "Годовой фонд времени работы оборудования, ч (Т)");
-        SetCell(worksheet, $"D{row + 4}:I{row + 4}", 365);
+        SetCell(worksheet, $"D{row + 4}:I{row + 4}", report.WorkDaysPerYear);
         
         SetCell(worksheet, $"A{row + 5}:C{row + 5}", "Число оборудования данного типа (n)");
-        SetCell(worksheet, $"D{row + 5}:I{row + 5}", 1);
+        SetCell(worksheet, $"D{row + 5}:I{row + 5}", report.MachiningMachineCount);
         
         SetCell(worksheet, $"A{row + 6}:C{row + 6}", "Число оборудования данного типа работающего одновременно (n)");
-        SetCell(worksheet, $"D{row + 6}:I{row + 6}", 1);
+        SetCell(worksheet, $"D{row + 6}:I{row + 6}", report.SameMachiningMachineCount);
         
         SetBorder(worksheet, $"A{row + 1}:I{row + 6}");
         row += 8;
@@ -281,7 +281,7 @@ public class OutputService : IOutputService
         
         SetCell(worksheet, $"A{row + 3}:E{row + 3}", "qi- удельные выделения пыли технологическим оборудованием (табл. П.2.1), г/с:");
         SetCell(worksheet, $"F{row + 3}:H{row + 3}", "пыль металлическая");
-        SetCell(worksheet, $"I{row + 3}", 0.007f);
+        SetCell(worksheet, $"I{row + 3}", report.Result.PollutantInfo.SpecificEmission);
         
         SetBorder(worksheet, $"A{row + 1}:I{row + 3}");
         row += 5;
@@ -292,10 +292,10 @@ public class OutputService : IOutputService
         SetCell(worksheet, $"F{row + 1}:G{row + 1}", "Максимальный выброс, г/с", true, XLAlignmentHorizontalValues.Center);
         SetCell(worksheet, $"H{row + 1}:I{row + 1}", "Валовый выброс, т/г", true, XLAlignmentHorizontalValues.Center);
         
-        SetCell(worksheet, $"A{row + 2}", "Код ЗВ", horizontal: XLAlignmentHorizontalValues.Center);
-        SetCell(worksheet, $"B{row + 2}:E{row + 2}", "Наименование ЗВ", horizontal: XLAlignmentHorizontalValues.Center);
-        SetCell(worksheet, $"F{row + 2}:G{row + 2}", "Максимальный выброс, г/с", horizontal: XLAlignmentHorizontalValues.Center);
-        SetCell(worksheet, $"H{row + 2}:I{row + 2}", "Валовый выброс, т/г", horizontal: XLAlignmentHorizontalValues.Center);
+        SetCell(worksheet, $"A{row + 2}", report.Result.PollutantInfo.Code, horizontal: XLAlignmentHorizontalValues.Center);
+        SetCell(worksheet, $"B{row + 2}:E{row + 2}", report.Result.PollutantInfo.Name, horizontal: XLAlignmentHorizontalValues.Center);
+        SetCell(worksheet, $"F{row + 2}:G{row + 2}", report.Result.MaximumEmission, horizontal: XLAlignmentHorizontalValues.Center);
+        SetCell(worksheet, $"H{row + 2}:I{row + 2}", report.Result.GrossEmission, horizontal: XLAlignmentHorizontalValues.Center);
         
         SetBorder(worksheet, $"A{row + 1}:I{row + 2}");
         

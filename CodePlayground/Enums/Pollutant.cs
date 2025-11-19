@@ -8,5 +8,6 @@ public enum Pollutant
     NO = 304,
     SO2 = 330,
     RPK240280 = 2754,
-    H2S = 333
+    H2S = 333,
+    Fe2O3 = 123
 }

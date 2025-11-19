@@ -33,10 +33,8 @@ public interface IEmissionService
     /// <summary>
     /// Расчет выбросов загрязняющих веществ при механической обработке металлов
     /// </summary>
-    /// <param name="type">Тип станка для обработки металла</param>
-    /// <param name="annualEquipmentOperatingTimeFund">Годовой фонд времени работы оборудования, ч</param>
-    /// <param name="precision">Количество знаков после запятой</param>
+    /// <param name="metalMachiningMachineType">Тип станка для обработки металла</param>
+    /// <param name="workDaysPerYear">Годовой фонд времени работы оборудования, ч</param>
     /// <returns></returns>
-    public (float, float) CalculateDuringMetalMachiningEmissions(MetalMachiningMachineType type,
-        float annualEquipmentOperatingTimeFund, int precision = 6);
+    public EmissionsResult CalculateDuringMetalMachiningEmissions(MetalMachiningMachineType metalMachiningMachineType, int workDaysPerYear);
 }
