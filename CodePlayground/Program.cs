@@ -19,24 +19,10 @@ class Program
             GeneratorCount = 1,
             SameGeneratorCount = 1
         };
-        gasolineGeneratorEmissionsReport.Emissions = new List<GasolineGeneratorEmissionsResult>
-        {
-            emissionService.CalculateGasolineGeneratorEmissions(Pollutant.CO,
-                gasolineGeneratorEmissionsReport.WorkHoursPerDay, gasolineGeneratorEmissionsReport.WorkDaysPerYear,
-                gasolineGeneratorEmissionsReport.GeneratorCount, gasolineGeneratorEmissionsReport.SameGeneratorCount),
-            emissionService.CalculateGasolineGeneratorEmissions(Pollutant.CH,
-                gasolineGeneratorEmissionsReport.WorkHoursPerDay, gasolineGeneratorEmissionsReport.WorkDaysPerYear,
-                gasolineGeneratorEmissionsReport.GeneratorCount, gasolineGeneratorEmissionsReport.SameGeneratorCount),
-            emissionService.CalculateGasolineGeneratorEmissions(Pollutant.NO2,
-                gasolineGeneratorEmissionsReport.WorkHoursPerDay, gasolineGeneratorEmissionsReport.WorkDaysPerYear,
-                gasolineGeneratorEmissionsReport.GeneratorCount, gasolineGeneratorEmissionsReport.SameGeneratorCount),
-            emissionService.CalculateGasolineGeneratorEmissions(Pollutant.NO,
-                gasolineGeneratorEmissionsReport.WorkHoursPerDay, gasolineGeneratorEmissionsReport.WorkDaysPerYear,
-                gasolineGeneratorEmissionsReport.GeneratorCount, gasolineGeneratorEmissionsReport.SameGeneratorCount),
-            emissionService.CalculateGasolineGeneratorEmissions(Pollutant.SO2,
-                gasolineGeneratorEmissionsReport.WorkHoursPerDay, gasolineGeneratorEmissionsReport.WorkDaysPerYear,
-                gasolineGeneratorEmissionsReport.GeneratorCount, gasolineGeneratorEmissionsReport.SameGeneratorCount)
-        }.OrderBy(e => e.PollutantInfo.Code).ToList();
+        gasolineGeneratorEmissionsReport.Emissions = emissionService.CalculateGasolineGeneratorEmissionsBatch(
+            new List<Pollutant> { Pollutant.CO, Pollutant.CH, Pollutant.NO2, Pollutant.NO, Pollutant.SO2 },
+            gasolineGeneratorEmissionsReport.WorkHoursPerDay, gasolineGeneratorEmissionsReport.WorkDaysPerYear,
+            gasolineGeneratorEmissionsReport.GeneratorCount, gasolineGeneratorEmissionsReport.SameGeneratorCount);
 
         outputService.CreateGasolineGeneratorEmissionsReport(gasolineGeneratorEmissionsReport, "/home/xjasz/Desktop");
 

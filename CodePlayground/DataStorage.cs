@@ -123,4 +123,11 @@ public static class DataStorage
                 }
             }
         };
+    
+    public static readonly Dictionary<MetalMachiningMachineType, float> SpecificDustEmissionsByType = new()
+    {
+        { MetalMachiningMachineType.Drilling, 0.007f },
+        { MetalMachiningMachineType.Milling, 0.097f },
+        { MetalMachiningMachineType.Cutting, 0.203f }
+    };
 }

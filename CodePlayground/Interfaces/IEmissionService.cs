@@ -8,15 +8,13 @@ public interface IEmissionService
     /// <summary>
     /// Расчет выбросов загрязняющих веществ от бензогенератора
     /// </summary>
-    /// <param name="pollutant">Загрязняющее вещество</param>
+    /// <param name="pollutants">Список загрязняющих веществ</param>
     /// <param name="workHoursPerDay">Время работы в день, ч</param>
     /// <param name="workDaysPerYear">Кол-во рабочих дней в году</param>
     /// <param name="generatorCount">Кол-во генераторов, шт</param>
     /// <param name="sameGeneratorCount">Кол-во одновременно работающих генераторов, шт</param>
-    /// <returns></returns>
-    public GasolineGeneratorEmissionsResult CalculateGasolineGeneratorEmissions(Pollutant pollutant,
-        int workHoursPerDay,
-        int workDaysPerYear, int generatorCount, int sameGeneratorCount);
+    public List<GasolineGeneratorEmissionsResult> CalculateGasolineGeneratorEmissionsBatch(List<Pollutant> pollutants,
+        int workHoursPerDay, int workDaysPerYear, int generatorCount, int sameGeneratorCount);
 
     /// <summary>
     /// Расчет выбросов загрязняющих веществ от резервуаров
