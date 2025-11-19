@@ -79,16 +79,26 @@ public class EmissionServiceTest
     }
 
     [TestCase(MetalMachiningMachineType.Drilling, 365, 0.0014f, 0.001840f)]
-    public void CalculateDuringMetalMachiningEmissions_ShouldReturnCorrectValues(MetalMachiningMachineType type, float annualEquipmentOperatingTimeFund, float expectedMaximumEmission, float expectedGrossEmission)
+    [TestCase(MetalMachiningMachineType.Milling, 365, 0.0194f, 0.025492f)]
+    [TestCase(MetalMachiningMachineType.Cutting, 365, 0.0406f, 0.053348f)]
+    public void CalculateDuringMetalMachiningEmissions_ShouldReturnCorrectValues(MetalMachiningMachineType type, int workDaysPerYear, float expectedMaximumEmission, float expectedGrossEmission)
     {
+        // Arrange
+        var info = DataStorage.PollutantInfos.First(i => i.Pollutant == Pollutant.Fe2O3);
+        
         // Act
-        var result = _service.CalculateDuringMetalMachiningEmissions(type, annualEquipmentOperatingTimeFund);
+        var result = _service.CalculateDuringMetalMachiningEmissions(type, workDaysPerYear);
 
         // Assert
         Assert.Multiple(() =>
         {
-            Assert.That(result.Item1, Is.EqualTo(expectedMaximumEmission));
-            Assert.That(result.Item2, Is.EqualTo(expectedGrossEmission));
+            Assert.That(result.PollutantInfo.Code, Is.EqualTo(info.Code));
+            Assert.That(result.PollutantInfo.Name, Is.EqualTo(info.Name));
+            Assert.That(result.PollutantInfo.ShortName, Is.EqualTo(info.ShortName));
+            Assert.That(result.PollutantInfo.Pollutant, Is.EqualTo(info.Pollutant));
+            Assert.That(result.PollutantInfo.SpecificEmission, Is.EqualTo(info.SpecificEmission));
+            Assert.That((float)Math.Round(result.MaximumEmission, 6), Is.EqualTo(expectedMaximumEmission));
+            Assert.That((float)Math.Round(result.GrossEmission, 6), Is.EqualTo(expectedGrossEmission));
         });
     }
 }
