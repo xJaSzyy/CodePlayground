@@ -17,16 +17,26 @@ class Program
             WorkHoursPerDay = 1,
             WorkDaysPerYear = 365,
             GeneratorCount = 1,
-            SameGeneratorCount = 1,
-            Emissions = new List<GasolineGeneratorEmissionsResult>
-            {
-                emissionService.CalculateGasolineGeneratorEmissions(Pollutant.CO, 1, 365, 1, 1),
-                emissionService.CalculateGasolineGeneratorEmissions(Pollutant.CH, 1, 365, 1, 1),
-                emissionService.CalculateGasolineGeneratorEmissions(Pollutant.NO2, 1, 365, 1, 1),
-                emissionService.CalculateGasolineGeneratorEmissions(Pollutant.NO, 1, 365, 1, 1),
-                emissionService.CalculateGasolineGeneratorEmissions(Pollutant.SO2, 1, 365, 1, 1)
-            }.OrderBy(e => e.PollutantInfo.Code).ToList()
+            SameGeneratorCount = 1
         };
+        gasolineGeneratorEmissionsReport.Emissions = new List<GasolineGeneratorEmissionsResult>
+        {
+            emissionService.CalculateGasolineGeneratorEmissions(Pollutant.CO,
+                gasolineGeneratorEmissionsReport.WorkHoursPerDay, gasolineGeneratorEmissionsReport.WorkDaysPerYear,
+                gasolineGeneratorEmissionsReport.GeneratorCount, gasolineGeneratorEmissionsReport.SameGeneratorCount),
+            emissionService.CalculateGasolineGeneratorEmissions(Pollutant.CH,
+                gasolineGeneratorEmissionsReport.WorkHoursPerDay, gasolineGeneratorEmissionsReport.WorkDaysPerYear,
+                gasolineGeneratorEmissionsReport.GeneratorCount, gasolineGeneratorEmissionsReport.SameGeneratorCount),
+            emissionService.CalculateGasolineGeneratorEmissions(Pollutant.NO2,
+                gasolineGeneratorEmissionsReport.WorkHoursPerDay, gasolineGeneratorEmissionsReport.WorkDaysPerYear,
+                gasolineGeneratorEmissionsReport.GeneratorCount, gasolineGeneratorEmissionsReport.SameGeneratorCount),
+            emissionService.CalculateGasolineGeneratorEmissions(Pollutant.NO,
+                gasolineGeneratorEmissionsReport.WorkHoursPerDay, gasolineGeneratorEmissionsReport.WorkDaysPerYear,
+                gasolineGeneratorEmissionsReport.GeneratorCount, gasolineGeneratorEmissionsReport.SameGeneratorCount),
+            emissionService.CalculateGasolineGeneratorEmissions(Pollutant.SO2,
+                gasolineGeneratorEmissionsReport.WorkHoursPerDay, gasolineGeneratorEmissionsReport.WorkDaysPerYear,
+                gasolineGeneratorEmissionsReport.GeneratorCount, gasolineGeneratorEmissionsReport.SameGeneratorCount)
+        }.OrderBy(e => e.PollutantInfo.Code).ToList();
 
         outputService.CreateGasolineGeneratorEmissionsReport(gasolineGeneratorEmissionsReport, "/home/xjasz/Desktop");
 
@@ -45,11 +55,18 @@ class Program
             DrainedVolume = 150f,
             AverageDrainTime = 1200f,
         };
-        reservoirsEmissionsReport.VaporConcentration = DataStorage.VaporConcentration[reservoirsEmissionsReport.ReservoirType][reservoirsEmissionsReport.ClimateZone][reservoirsEmissionsReport.OilProduct];
+        reservoirsEmissionsReport.VaporConcentration =
+            DataStorage.VaporConcentration[reservoirsEmissionsReport.ReservoirType][
+                reservoirsEmissionsReport.ClimateZone][reservoirsEmissionsReport.OilProduct];
         reservoirsEmissionsReport.Emissions = new List<ReservoirsEmissionsResult>
         {
-            emissionService.CalculateReservoirsEmissions(Pollutant.RPK240280, reservoirsEmissionsReport.VaporConcentration, 100f, 50f, 150f),
-            emissionService.CalculateReservoirsEmissions(Pollutant.H2S, reservoirsEmissionsReport.VaporConcentration, 100f, 50f, 150f)
+            emissionService.CalculateReservoirsEmissions(Pollutant.RPK240280,
+                reservoirsEmissionsReport.VaporConcentration, reservoirsEmissionsReport.AutumnWinterOilAmount,
+                reservoirsEmissionsReport.SpringSummerOilAmount, reservoirsEmissionsReport.DrainedVolume,
+                reservoirsEmissionsReport.AverageDrainTime),
+            emissionService.CalculateReservoirsEmissions(Pollutant.H2S, reservoirsEmissionsReport.VaporConcentration,
+                reservoirsEmissionsReport.AutumnWinterOilAmount, reservoirsEmissionsReport.SpringSummerOilAmount,
+                reservoirsEmissionsReport.DrainedVolume, reservoirsEmissionsReport.AverageDrainTime)
         }.OrderBy(e => e.PollutantInfo.Code).ToList();
 
         outputService.CreateReservoirsEmissionsReport(reservoirsEmissionsReport, "/home/xjasz/Desktop");
