@@ -48,5 +48,13 @@ class Program
             reservoirsEmissionsReport.DrainedVolume, reservoirsEmissionsReport.AverageDrainTime);
 
         outputService.CreateReservoirsEmissionsReport(reservoirsEmissionsReport, "/home/xjasz/Desktop");
+
+        var duringMetalMachiningEmissionsReport = new DuringMetalMachiningEmissionsReport
+        {
+            SelectionSource = "001",
+            PollutionSource = "6002",
+        };
+        
+        outputService.CreateDuringMetalMachiningEmissionsReport(duringMetalMachiningEmissionsReport, "/home/xjasz/Desktop");
     }
 }

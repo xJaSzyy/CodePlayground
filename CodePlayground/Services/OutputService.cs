@@ -1,4 +1,3 @@
-using System.Globalization;
 using ClosedXML.Excel;
 using CodePlayground.Extensions;
 using CodePlayground.Interfaces;
@@ -84,7 +83,7 @@ public class OutputService : IOutputService
         SetBorder(worksheet, $"A{row - report.Emissions.Count + 1}:I{row}", XLBorderStyleValues.Medium);
         row += 2;
         
-        SetCell(worksheet, $"A{row}:I{row}", $"Итого выбросов от источника {report.PollutionSource}", true, XLAlignmentHorizontalValues.Center);
+        SetCell(worksheet, $"A{row}:I{row}", "Результаты расчетов", true);
         row++;
         
         SetCell(worksheet, $"A{row}", "Код ЗВ", true, XLAlignmentHorizontalValues.Center);
@@ -215,9 +214,10 @@ public class OutputService : IOutputService
         row += 2;
         
         SetCell(worksheet, $"A{row}:H{row}", "Итого по источнику", true);
-        SetCell(worksheet, $"A{row + 1}:D{row + 1}", "Наименование загрязняющего вещества", true);
-        SetCell(worksheet, $"E{row + 1}:F{row + 1}", "Максимальный выброс, г/с", true);
-        SetCell(worksheet, $"G{row + 1}:H{row + 1}", "Валовый выброс т/г", true);
+        SetCell(worksheet, $"A{row + 1}", "Код ЗВ", true, XLAlignmentHorizontalValues.Center);
+        SetCell(worksheet, $"B{row + 1}:D{row + 1}", "Наименование ЗВ", true, XLAlignmentHorizontalValues.Center);
+        SetCell(worksheet, $"E{row + 1}:F{row + 1}", "Максимальный выброс, г/с", true, XLAlignmentHorizontalValues.Center);
+        SetCell(worksheet, $"G{row + 1}:H{row + 1}", "Валовый выброс т/г", true, XLAlignmentHorizontalValues.Center);
         row++;
         
         foreach (var emission in report.Result.Emissions)
@@ -230,6 +230,74 @@ public class OutputService : IOutputService
         }
         
         SetBorder(worksheet, $"A{row - report.Result.Emissions.Count}:H{row}");
+        
+        workbook.SaveAs(outputFile);
+    }
+
+    public void CreateDuringMetalMachiningEmissionsReport(DuringMetalMachiningEmissionsReport report, string outputFile)
+    {
+        var fileName = $"ИЗА {report.PollutionSource}_{report.SelectionSource} Сверлильный станок";
+        outputFile += $"/{fileName}.xlsx";
+        
+        var workbook = new XLWorkbook();
+        var worksheet = workbook.Worksheets.Add(fileName);
+
+        var row = 1;
+        
+        SetCell(worksheet, $"A{row}:I{row}", "Расчет выбросов загрязняющих веществ при механической обработке металлов", true, XLAlignmentHorizontalValues.Center);
+        SetCell(worksheet, $"A{row + 2}:I{row + 2}", $"Источник загрязнения № {report.PollutionSource}, сверлильный станок", true);
+        SetCell(worksheet, $"A{row + 3}:I{row + 3}", $"Источник выделения № {report.SelectionSource}", true);
+        SetCell(worksheet, $"A{row + 4}:I{row + 7}", "Литература: Методика расчета выделений (выбросов) загрязняющих веществ в атмосферу при механической обработке металлов (на основе удельных показателей) (утверждена приказом Госкомэкологии от 14.04.1997 \u2116 158)");
+        row += 9;
+        
+        SetCell(worksheet, $"A{row}:I{row}", "Исходные данные", true);
+        SetCell(worksheet, $"A{row + 1}:C{row + 1}", "Вид оборудования:");
+        SetCell(worksheet, $"D{row + 1}:I{row + 1}", "сверлильный станок");
+        
+        SetCell(worksheet, $"A{row + 2}:C{row + 2}", "Тип охлаждения:");
+        SetCell(worksheet, $"D{row + 2}:I{row + 2}", "нет");
+        
+        SetCell(worksheet, $"A{row + 3}:C{row + 3}", "Вид обрабатываемого материала:");
+        SetCell(worksheet, $"D{row + 3}:I{row + 3}", "сталь");
+        
+        SetCell(worksheet, $"A{row + 4}:C{row + 4}", "Годовой фонд времени работы оборудования, ч (Т)");
+        SetCell(worksheet, $"D{row + 4}:I{row + 4}", 365);
+        
+        SetCell(worksheet, $"A{row + 5}:C{row + 5}", "Число оборудования данного типа (n)");
+        SetCell(worksheet, $"D{row + 5}:I{row + 5}", 1);
+        
+        SetCell(worksheet, $"A{row + 6}:C{row + 6}", "Число оборудования данного типа работающего одновременно (n)");
+        SetCell(worksheet, $"D{row + 6}:I{row + 6}", 1);
+        
+        SetBorder(worksheet, $"A{row + 1}:I{row + 6}");
+        row += 8;
+        
+        SetCell(worksheet, $"A{row}:I{row}", "Расчет выброса", true);
+        SetCell(worksheet, $"A{row + 1}:E{row + 1}", "Валовое значение мощности выделений и выбросов ЗВ для i-го ИЗА, т/г");
+        SetCell(worksheet, $"F{row + 1}:I{row + 1}", "Miгв=0,2\u22193,6\u2219qi\u2219Т\u221910-3, т/г");
+        
+        SetCell(worksheet, $"A{row + 2}:E{row + 2}", "Максимально-разовый выброс ЗВ, г/с");
+        SetCell(worksheet, $"F{row + 2}:I{row + 2}", "Mi в=0,2\u2219qi, г/с");
+        
+        SetCell(worksheet, $"A{row + 3}:E{row + 3}", "qi- удельные выделения пыли технологическим оборудованием (табл. П.2.1), г/с:");
+        SetCell(worksheet, $"F{row + 3}:H{row + 3}", "пыль металлическая");
+        SetCell(worksheet, $"I{row + 3}", 0.007f);
+        
+        SetBorder(worksheet, $"A{row + 1}:I{row + 3}");
+        row += 5;
+        
+        SetCell(worksheet, $"A{row}:I{row}", "Результат расчета", true);
+        SetCell(worksheet, $"A{row + 1}", "Код ЗВ", true, XLAlignmentHorizontalValues.Center);
+        SetCell(worksheet, $"B{row + 1}:E{row + 1}", "Наименование ЗВ", true, XLAlignmentHorizontalValues.Center);
+        SetCell(worksheet, $"F{row + 1}:G{row + 1}", "Максимальный выброс, г/с", true, XLAlignmentHorizontalValues.Center);
+        SetCell(worksheet, $"H{row + 1}:I{row + 1}", "Валовый выброс, т/г", true, XLAlignmentHorizontalValues.Center);
+        
+        SetCell(worksheet, $"A{row + 2}", "Код ЗВ", horizontal: XLAlignmentHorizontalValues.Center);
+        SetCell(worksheet, $"B{row + 2}:E{row + 2}", "Наименование ЗВ", horizontal: XLAlignmentHorizontalValues.Center);
+        SetCell(worksheet, $"F{row + 2}:G{row + 2}", "Максимальный выброс, г/с", horizontal: XLAlignmentHorizontalValues.Center);
+        SetCell(worksheet, $"H{row + 2}:I{row + 2}", "Валовый выброс, т/г", horizontal: XLAlignmentHorizontalValues.Center);
+        
+        SetBorder(worksheet, $"A{row + 1}:I{row + 2}");
         
         workbook.SaveAs(outputFile);
     }
@@ -257,6 +325,8 @@ public class OutputService : IOutputService
         cell.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
         cell.Style.Font.Bold = bold;
         cell.Style.Alignment.WrapText = true;
+        cell.Style.Font.FontName = "Times New Roman";
+        cell.Style.Font.FontSize = 12;
     }
 
     private static void SetBorder(IXLWorksheet worksheet, string address, XLBorderStyleValues style = XLBorderStyleValues.Thin)
