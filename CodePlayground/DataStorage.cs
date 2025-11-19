@@ -62,8 +62,23 @@ public static class DataStorage
         new PollutantInfo
         {
             Code = 123,
-            Name = "Железо триоксид (железа оксид; железо сесквиоксид) /в пересчете на железо/",
-            Pollutant = Pollutant.Fe2O3
+            Name = "диЖелезо триоксид (железа оксид; железо сесквиоксид) /в пересчете на железо/",
+            Pollutant = Pollutant.Fe2O3,
+            SpecificEmission = 9.77f
+        },
+        new PollutantInfo
+        {
+            Code = 143,
+            Name = "Марганец и его соединения /в пересчете на марганец (IV) оксид/",
+            Pollutant = Pollutant.MnO2,
+            SpecificEmission = 1.73f
+        },
+        new PollutantInfo
+        {
+            Code = 342,
+            Name = "Фториды газообразные /в пересчете на фтор/: гидрофторид (водород фторид, фторводород); кремний тетрафторид",
+            Pollutant = Pollutant.FluorideGases,
+            SpecificEmission = 0.4f
         }
     };
 
