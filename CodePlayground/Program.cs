@@ -42,7 +42,7 @@ class Program
             AverageDrainTime = 1200f,
         };
         reservoirsEmissionsReport.VaporConcentration = DataStorage.VaporConcentration[reservoirsEmissionsReport.ReservoirType][reservoirsEmissionsReport.ClimateZone][reservoirsEmissionsReport.OilProduct];
-        reservoirsEmissionsReport.Emissions = emissionService.CalculateReservoirsEmissionsBatch(
+        reservoirsEmissionsReport.Result = emissionService.CalculateReservoirsEmissionsBatch(
             new List<Pollutant> { Pollutant.RPK240280, Pollutant.H2S }, reservoirsEmissionsReport.VaporConcentration,
             reservoirsEmissionsReport.AutumnWinterOilAmount, reservoirsEmissionsReport.SpringSummerOilAmount,
             reservoirsEmissionsReport.DrainedVolume, reservoirsEmissionsReport.AverageDrainTime);

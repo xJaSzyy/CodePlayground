@@ -8,31 +8,37 @@ public class EmissionService : IEmissionService
 {
     #region Public
 
-    public List<GasolineGeneratorEmissionsResult> CalculateGasolineGeneratorEmissionsBatch(List<Pollutant> pollutants,
+    public List<EmissionsResult> CalculateGasolineGeneratorEmissionsBatch(List<Pollutant> pollutants,
         int workHoursPerDay, int workDaysPerYear, int generatorCount, int sameGeneratorCount)
     {
-        var result = new List<GasolineGeneratorEmissionsResult>();
+        var result = new List<EmissionsResult>();
 
-        foreach (var pollutant in pollutants)
+        foreach (var pollutant in pollutants.OrderBy(p => (int)p))
         {
             result.Add(CalculateGasolineGeneratorEmissions(pollutant, workHoursPerDay, workDaysPerYear, generatorCount, sameGeneratorCount));
         }
 
-        return result.OrderBy(e => e.PollutantInfo.Code).ToList();
+        return result;
     }
 
-    public List<ReservoirsEmissionsResult> CalculateReservoirsEmissionsBatch(List<Pollutant> pollutants,
+    public ReservoirsEmissionsBatchResult CalculateReservoirsEmissionsBatch(List<Pollutant> pollutants,
         VaporConcentrationRecord vaporConcentration, float autumnWinterOilAmount, float springSummerOilAmount,
         float drainedVolume, float averageDrainTime = 1200f)
     {
-        var result = new List<ReservoirsEmissionsResult>();
-
-        foreach (var pollutant in pollutants)
+        var result = new ReservoirsEmissionsBatchResult
         {
-            result.Add(CalculateReservoirsEmissions(pollutant, vaporConcentration, autumnWinterOilAmount, springSummerOilAmount, drainedVolume, averageDrainTime));
+            AnnualInjectionEmissions = (vaporConcentration.AutumnWinterVaporConcentration * autumnWinterOilAmount + vaporConcentration.SpringSummerVaporConcentration * springSummerOilAmount) * 1e-6f,
+            AnnualIrrigationEmissions = 50f * (autumnWinterOilAmount + springSummerOilAmount) * 1e-6f,
+            MaxVaporEmission = (vaporConcentration.MaxVaporConcentration * drainedVolume) / averageDrainTime,
+            Emissions = new List<EmissionsResult>()
+        };
+        
+        foreach (var pollutant in pollutants.OrderBy(p => (int)p))
+        {
+            result.Emissions.Add(CalculateReservoirsEmissions(pollutant, vaporConcentration, autumnWinterOilAmount, springSummerOilAmount, drainedVolume, averageDrainTime));
         }
-
-        return result.OrderBy(e => e.PollutantInfo.Code).ToList();
+        
+        return result;
     }
 
     public (float, float) CalculateDuringMetalMachiningEmissions(MetalMachiningMachineType type,
@@ -50,7 +56,7 @@ public class EmissionService : IEmissionService
 
     #region Private
 
-    private GasolineGeneratorEmissionsResult CalculateGasolineGeneratorEmissions(Pollutant pollutant,
+    private static EmissionsResult CalculateGasolineGeneratorEmissions(Pollutant pollutant,
         int workHoursPerDay, int workDaysPerYear, int generatorCount, int sameGeneratorCount)
     {
         var pollutantInfo = DataStorage.PollutantInfos.First(i => i.Pollutant == pollutant);
@@ -59,7 +65,7 @@ public class EmissionService : IEmissionService
         var grossEmission = 0.25f * pollutantInfo.SpecificEmission * 5f * workHoursPerDay * workDaysPerYear *
                             generatorCount * 1e-6f;
 
-        var result = new GasolineGeneratorEmissionsResult
+        var result = new EmissionsResult
         {
             PollutantInfo = pollutantInfo,
             MaximumEmission = maximumEmission,
@@ -69,7 +75,7 @@ public class EmissionService : IEmissionService
         return result;
     }
     
-    private ReservoirsEmissionsResult CalculateReservoirsEmissions(Pollutant pollutant,
+    private static EmissionsResult CalculateReservoirsEmissions(Pollutant pollutant,
         VaporConcentrationRecord vaporConcentration, float autumnWinterOilAmount, float springSummerOilAmount,
         float drainedVolume, float averageDrainTime = 1200f)
     {
@@ -83,12 +89,9 @@ public class EmissionService : IEmissionService
         var maxVaporEmission = (vaporConcentration.MaxVaporConcentration * drainedVolume) / averageDrainTime;
         var grossEmission = annualInjectionEmissions + annualIrrigationEmissions;
 
-        var result = new ReservoirsEmissionsResult
+        var result = new EmissionsResult
         {
             PollutantInfo = pollutantInfo,
-            MaxVaporEmission = maxVaporEmission,
-            AnnualInjectionEmissions = annualInjectionEmissions,
-            AnnualIrrigationEmissions = annualIrrigationEmissions,
             MaximumEmission = maxVaporEmission * pollutantInfo.SpecificEmission * 1e-2f,
             GrossEmission = grossEmission * pollutantInfo.SpecificEmission * 1e-2f,
         };

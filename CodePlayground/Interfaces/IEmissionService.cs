@@ -13,7 +13,7 @@ public interface IEmissionService
     /// <param name="workDaysPerYear">Кол-во рабочих дней в году</param>
     /// <param name="generatorCount">Кол-во генераторов, шт</param>
     /// <param name="sameGeneratorCount">Кол-во одновременно работающих генераторов, шт</param>
-    public List<GasolineGeneratorEmissionsResult> CalculateGasolineGeneratorEmissionsBatch(List<Pollutant> pollutants,
+    public List<EmissionsResult> CalculateGasolineGeneratorEmissionsBatch(List<Pollutant> pollutants,
         int workHoursPerDay, int workDaysPerYear, int generatorCount, int sameGeneratorCount);
 
     /// <summary>
@@ -26,7 +26,7 @@ public interface IEmissionService
     /// <param name="drainedVolume">Объем слитого нефтепродукта в резервуар, м3</param>
     /// <param name="averageDrainTime">Среднее время слива, с</param>
     /// <returns></returns>
-    public List<ReservoirsEmissionsResult> CalculateReservoirsEmissionsBatch(List<Pollutant> pollutants,
+    public ReservoirsEmissionsBatchResult CalculateReservoirsEmissionsBatch(List<Pollutant> pollutants,
         VaporConcentrationRecord vaporConcentration, float autumnWinterOilAmount, float springSummerOilAmount,
         float drainedVolume, float averageDrainTime = 1200f);
 

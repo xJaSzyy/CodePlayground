@@ -38,17 +38,5 @@ public class GasolineGeneratorEmissionsReport
     /// <summary>
     /// Список результатов расчетов выбросов ЗВ от бензогенератора
     /// </summary>
-    public List<GasolineGeneratorEmissionsResult> Emissions { get; set; } = new();
-}
-
-/// <summary>
-/// Результат одного расчета выбросов ЗВ от бензогенератора
-/// </summary>
-public class GasolineGeneratorEmissionsResult
-{
-    public PollutantInfo PollutantInfo { get; set; } = null!;
-
-    public float MaximumEmission { get; set; }
-    
-    public float GrossEmission { get; set; }
+    public List<EmissionsResult> Emissions { get; set; } = new();
 }

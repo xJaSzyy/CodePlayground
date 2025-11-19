@@ -65,16 +65,16 @@ public class EmissionServiceTest
         // Assert
         Assert.Multiple(() =>
         {
-            Assert.That(result.First().PollutantInfo.Code, Is.EqualTo(info.Code));
-            Assert.That(result.First().PollutantInfo.Name, Is.EqualTo(info.Name));
-            Assert.That(result.First().PollutantInfo.ShortName, Is.EqualTo(info.ShortName));
-            Assert.That(result.First().PollutantInfo.Pollutant, Is.EqualTo(info.Pollutant));
-            Assert.That(result.First().PollutantInfo.SpecificEmission, Is.EqualTo(info.SpecificEmission));
-            Assert.That((float)Math.Round(result.First().MaxVaporEmission, 6), Is.EqualTo(maxVaporEmission));
-            Assert.That((float)Math.Round(result.First().AnnualInjectionEmissions, 6), Is.EqualTo(annualInjectionEmissions));
-            Assert.That((float)Math.Round(result.First().AnnualIrrigationEmissions, 6), Is.EqualTo(annualIrrigationEmissions));
-            Assert.That((float)Math.Round(result.First().MaximumEmission, 6), Is.EqualTo(expectedMaximumEmission));
-            Assert.That((float)Math.Round(result.First().GrossEmission, 6), Is.EqualTo(expectedGrossEmission));
+            Assert.That(result.Emissions.First().PollutantInfo.Code, Is.EqualTo(info.Code));
+            Assert.That(result.Emissions.First().PollutantInfo.Name, Is.EqualTo(info.Name));
+            Assert.That(result.Emissions.First().PollutantInfo.ShortName, Is.EqualTo(info.ShortName));
+            Assert.That(result.Emissions.First().PollutantInfo.Pollutant, Is.EqualTo(info.Pollutant));
+            Assert.That(result.Emissions.First().PollutantInfo.SpecificEmission, Is.EqualTo(info.SpecificEmission));
+            Assert.That((float)Math.Round(result.MaxVaporEmission, 6), Is.EqualTo(maxVaporEmission));
+            Assert.That((float)Math.Round(result.AnnualInjectionEmissions, 6), Is.EqualTo(annualInjectionEmissions));
+            Assert.That((float)Math.Round(result.AnnualIrrigationEmissions, 6), Is.EqualTo(annualIrrigationEmissions));
+            Assert.That((float)Math.Round(result.Emissions.First().MaximumEmission, 6), Is.EqualTo(expectedMaximumEmission));
+            Assert.That((float)Math.Round(result.Emissions.First().GrossEmission, 6), Is.EqualTo(expectedGrossEmission));
         });
     }
 

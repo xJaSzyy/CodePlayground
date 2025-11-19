@@ -166,7 +166,7 @@ public class OutputService : IOutputService
         SetCell(worksheet, $"E{row + 8}:H{row + 8}", report.VaporConcentration.SpringSummerVaporConcentration);
         
         SetCell(worksheet, $"A{row + 9}:D{row + 9}", "Максимальные выбросы паров нефтепродуктов, М (г/с)", true);
-        SetCell(worksheet, $"E{row + 9}:H{row + 9}", report.Emissions.First().MaxVaporEmission, true);
+        SetCell(worksheet, $"E{row + 9}:H{row + 9}", report.Result.MaxVaporEmission, true);
         
         SetBorder(worksheet, $"A{row + 1}:H{row + 9}");
         row += 11;
@@ -181,16 +181,16 @@ public class OutputService : IOutputService
         SetCell(worksheet, $"E{row + 2}:H{row + 2}", "Gзак = (Ср\u2219Qоз + Ср\u2219Qвл) \u2219 10-6", true);
         
         SetCell(worksheet, $"A{row + 3}:D{row + 3}", "Годовые выбросы при закачке, Gзак (т/г)");
-        SetCell(worksheet, $"E{row + 3}:H{row + 3}", report.Emissions.First().AnnualInjectionEmissions);
+        SetCell(worksheet, $"E{row + 3}:H{row + 3}", report.Result.AnnualInjectionEmissions);
         
         SetCell(worksheet, $"A{row + 4}:D{row + 4}", "Годовые выбросы при проливе, Gпр (т/г) для дизтоплив");
         SetCell(worksheet, $"E{row + 4}:H{row + 4}", "Gпр = 50 \u2219 (Qоз + Qвл) \u2219 10-6", true);
         
         SetCell(worksheet, $"A{row + 5}:D{row + 5}", "Годовые выбросы при проливе, Gпр (т/г) для дизтоплив");
-        SetCell(worksheet, $"E{row + 5}:H{row + 5}", report.Emissions.First().AnnualIrrigationEmissions);
+        SetCell(worksheet, $"E{row + 5}:H{row + 5}", report.Result.AnnualIrrigationEmissions);
         
         SetCell(worksheet, $"A{row + 6}:D{row + 6}", "Валовый выброс, G (т/г)", true);
-        SetCell(worksheet, $"E{row + 6}:H{row + 6}", report.Emissions.First().AnnualInjectionEmissions + report.Emissions.First().AnnualIrrigationEmissions, true);
+        SetCell(worksheet, $"E{row + 6}:H{row + 6}", report.Result.AnnualInjectionEmissions + report.Result.AnnualIrrigationEmissions, true);
         
         SetBorder(worksheet, $"A{row}:H{row + 6}");
         row += 8;
@@ -201,17 +201,17 @@ public class OutputService : IOutputService
         SetCell(worksheet, $"A{row + 1}:D{row + 1}", "Валовые выбросы, Gi (т/г)", true);
         SetCell(worksheet, $"E{row + 1}:H{row + 1}", "Gi = G \u2219 Ci \u2219 10-2", true);
         
-        SetCell(worksheet, $"A{row + 2}:D{row + 2 + report.Emissions.Count - 1}", "Концентрация i-го загрязняющего вещества,    Сi % мас. (прил. 14)");
+        SetCell(worksheet, $"A{row + 2}:D{row + 2 + report.Result.Emissions.Count - 1}", "Концентрация i-го загрязняющего вещества,    Сi % мас. (прил. 14)");
         row++;
         
-        foreach (var emission in report.Emissions)
+        foreach (var emission in report.Result.Emissions)
         {
             row++;
             SetCell(worksheet, $"E{row}:G{row}", emission.PollutantInfo.ShortName);
             SetCell(worksheet, $"H{row}", emission.PollutantInfo.SpecificEmission, numberFormat: "0.##");
         }
         
-        SetBorder(worksheet, $"A{row - report.Emissions.Count - 1}:H{row}");
+        SetBorder(worksheet, $"A{row - report.Result.Emissions.Count - 1}:H{row}");
         row += 2;
         
         SetCell(worksheet, $"A{row}:H{row}", "Итого по источнику", true);
@@ -220,7 +220,7 @@ public class OutputService : IOutputService
         SetCell(worksheet, $"G{row + 1}:H{row + 1}", "Валовый выброс т/г", true);
         row++;
         
-        foreach (var emission in report.Emissions)
+        foreach (var emission in report.Result.Emissions)
         {
             row++;
             SetCell(worksheet, $"A{row}", emission.PollutantInfo.Code, horizontal: XLAlignmentHorizontalValues.Center);
@@ -229,7 +229,7 @@ public class OutputService : IOutputService
             SetCell(worksheet, $"G{row}:H{row}", emission.GrossEmission, horizontal: XLAlignmentHorizontalValues.Center);
         }
         
-        SetBorder(worksheet, $"A{row - report.Emissions.Count}:H{row}");
+        SetBorder(worksheet, $"A{row - report.Result.Emissions.Count}:H{row}");
         
         workbook.SaveAs(outputFile);
     }

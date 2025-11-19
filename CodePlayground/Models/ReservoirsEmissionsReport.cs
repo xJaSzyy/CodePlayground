@@ -73,25 +73,7 @@ public class ReservoirsEmissionsReport
     public float AverageDrainTime { get; set; }
     
     /// <summary>
-    /// Список результатов расчетов выбросов ЗВ от резервуара
+    /// Результат расчетов выбросов ЗВ от резервуаров
     /// </summary>
-    public List<ReservoirsEmissionsResult> Emissions { get; set; } = new();
-}
-
-/// <summary>
-/// Результат одного расчета выбросов ЗВ от резервуаров
-/// </summary>
-public class ReservoirsEmissionsResult
-{
-    public PollutantInfo PollutantInfo { get; set; } = null!;
-
-    public float MaxVaporEmission { get; set; }
-    
-    public float AnnualInjectionEmissions { get; set; }
-    
-    public float AnnualIrrigationEmissions { get; set; }
-    
-    public float MaximumEmission { get; set; }
-    
-    public float GrossEmission { get; set; }
+    public ReservoirsEmissionsBatchResult Result { get; set; } = new();
 }
