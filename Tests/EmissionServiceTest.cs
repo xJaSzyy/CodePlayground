@@ -37,6 +37,7 @@ public class EmissionServiceTest
         {
             Assert.That(result.PollutantInfo.Code, Is.EqualTo(info.Code));
             Assert.That(result.PollutantInfo.Name, Is.EqualTo(info.Name));
+            Assert.That(result.PollutantInfo.ShortName, Is.EqualTo(info.ShortName));
             Assert.That(result.PollutantInfo.Pollutant, Is.EqualTo(info.Pollutant));
             Assert.That(result.PollutantInfo.SpecificEmission, Is.EqualTo(info.SpecificEmission));
             Assert.That((float)Math.Round(result.MaximumEmission, 6), Is.EqualTo(expectedMaximumEmission));
@@ -44,23 +45,36 @@ public class EmissionServiceTest
         });
     }
 
-    [TestCase(1.86f, 150f, 1200f, 100f, 50f, 
-        0.96f, 1.32f, 99.72f, 0.231849f, 0.007641f)]
-    public void CalculateReservoirsEmissions_ShouldReturnCorrectValues(float maximumConcentration, float drainedVolume,
-        float averageDrainTime, float oilAmountInAutumnWinter, float oilAmountInSpringSummer,
-        float fillingConcentrationInAutumnWinter, float fillingConcentrationInSpringSummer,
-        float pollutantConcentration, float expectedMaximumEmission, float expectedGrossEmission)
+    [TestCase(Pollutant.RPK240280, ReservoirType.Ground, OilProduct.DieselFuel, ClimateZone.Second, 100f, 50f, 150f,
+        1200f, 0.2325f, 0.000162f, 0.0075f, 0.231849f, 0.007641f)]
+    [TestCase(Pollutant.H2S, ReservoirType.Ground, OilProduct.DieselFuel, ClimateZone.Second, 100f, 50f, 150f,
+        1200f, 0.2325f, 0.000162f, 0.0075f, 0.000651f, 0.000021f)]
+    public void CalculateReservoirsEmissions_ShouldReturnCorrectValues(Pollutant pollutant, ReservoirType reservoirType,
+        OilProduct oilProduct, ClimateZone climateZone, float autumnWinterOilAmount, float springSummerOilAmount,
+        float drainedVolume, float averageDrainTime, float maxVaporEmission, float annualInjectionEmissions,
+        float annualIrrigationEmissions, float expectedMaximumEmission, float expectedGrossEmission)
     {
+        // Arrange
+        var info = DataStorage.PollutantInfos.First(i => i.Pollutant == pollutant);
+        var vaporConcentration = DataStorage.VaporConcentration[reservoirType][climateZone][oilProduct];
+
         // Act
-        var result = _service.CalculateReservoirsEmissions(maximumConcentration, drainedVolume, averageDrainTime,
-            oilAmountInAutumnWinter, oilAmountInSpringSummer, fillingConcentrationInAutumnWinter,
-            fillingConcentrationInSpringSummer, pollutantConcentration);
+        var result = _service.CalculateReservoirsEmissions(pollutant, vaporConcentration, autumnWinterOilAmount,
+            springSummerOilAmount, drainedVolume, averageDrainTime);
 
         // Assert
         Assert.Multiple(() =>
         {
-            Assert.That(result.Item1, Is.EqualTo(expectedMaximumEmission));
-            Assert.That(result.Item2, Is.EqualTo(expectedGrossEmission));
+            Assert.That(result.PollutantInfo.Code, Is.EqualTo(info.Code));
+            Assert.That(result.PollutantInfo.Name, Is.EqualTo(info.Name));
+            Assert.That(result.PollutantInfo.ShortName, Is.EqualTo(info.ShortName));
+            Assert.That(result.PollutantInfo.Pollutant, Is.EqualTo(info.Pollutant));
+            Assert.That(result.PollutantInfo.SpecificEmission, Is.EqualTo(info.SpecificEmission));
+            Assert.That((float)Math.Round(result.MaxVaporEmission, 6), Is.EqualTo(maxVaporEmission));
+            Assert.That((float)Math.Round(result.AnnualInjectionEmissions, 6), Is.EqualTo(annualInjectionEmissions));
+            Assert.That((float)Math.Round(result.AnnualIrrigationEmissions, 6), Is.EqualTo(annualIrrigationEmissions));
+            Assert.That((float)Math.Round(result.MaximumEmission, 6), Is.EqualTo(expectedMaximumEmission));
+            Assert.That((float)Math.Round(result.GrossEmission, 6), Is.EqualTo(expectedGrossEmission));
         });
     }
 

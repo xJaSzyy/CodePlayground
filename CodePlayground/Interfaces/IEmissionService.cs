@@ -14,7 +14,8 @@ public interface IEmissionService
     /// <param name="generatorCount">Кол-во генераторов, шт</param>
     /// <param name="sameGeneratorCount">Кол-во одновременно работающих генераторов, шт</param>
     /// <returns></returns>
-    public GasolineGeneratorEmissionsResult CalculateGasolineGeneratorEmissions(Pollutant pollutant, int workHoursPerDay,
+    public GasolineGeneratorEmissionsResult CalculateGasolineGeneratorEmissions(Pollutant pollutant,
+        int workHoursPerDay,
         int workDaysPerYear, int generatorCount, int sameGeneratorCount);
 
     /// <summary>
@@ -27,8 +28,9 @@ public interface IEmissionService
     /// <param name="drainedVolume">Объем слитого нефтепродукта в резервуар, м3</param>
     /// <param name="averageDrainTime">Среднее время слива, с</param>
     /// <returns></returns>
-    public ReservoirsEmissionsResult CalculateReservoirsEmissions(Pollutant pollutant, VaporConcentrationRecord vaporConcentration, float autumnWinterOilAmount, float springSummerOilAmount,
-        float drainedVolume, float averageDrainTime);
+    public ReservoirsEmissionsResult CalculateReservoirsEmissions(Pollutant pollutant,
+        VaporConcentrationRecord vaporConcentration, float autumnWinterOilAmount, float springSummerOilAmount,
+        float drainedVolume, float averageDrainTime = 1200f);
 
     /// <summary>
     /// Расчет выбросов загрязняющих веществ при механической обработке металлов
