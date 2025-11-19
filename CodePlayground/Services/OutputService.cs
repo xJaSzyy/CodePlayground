@@ -1,5 +1,6 @@
 using System.Globalization;
 using ClosedXML.Excel;
+using CodePlayground.Extensions;
 using CodePlayground.Interfaces;
 using CodePlayground.Models;
 
@@ -95,7 +96,6 @@ public class OutputService : IOutputService
         SetBorder(worksheet, $"A{row + 1}:A{row + report.Emissions.Count}", XLBorderStyleValues.Medium);
         SetBorder(worksheet, $"B{row + 1}:I{row + report.Emissions.Count}", XLBorderStyleValues.Medium);
 
-        report.Emissions = report.Emissions.OrderBy(e => e.PollutantInfo.Code).ToList();
         foreach (var emission in report.Emissions)
         {
             row++;
@@ -108,7 +108,131 @@ public class OutputService : IOutputService
         workbook.SaveAs($"/home/xjasz/Desktop/{fileName}.xlsx");
     }
 
-    private static void SetCell(IXLWorksheet worksheet, string address, object value, bool bold = false, XLAlignmentHorizontalValues horizontal = XLAlignmentHorizontalValues.Left)
+    public void CreateReservoirsEmissionsReport(ReservoirsEmissionsReport report)
+    {
+        var fileName = $"ИЗА {report.PollutionSource}_{report.SelectionSource} Резервуары";
+        
+        var workbook = new XLWorkbook();
+        var worksheet = workbook.Worksheets.Add(fileName);
+
+        var row = 1;
+        
+        SetCell(worksheet, $"A{row}:H{row}", "Расчет выбросов загрязняющих веществ от резервуаров", true, XLAlignmentHorizontalValues.Center);
+        SetCell(worksheet, $"A{row + 2}:H{row + 2}", $"Источник загрязнения № {report.PollutionSource}, резервуары для дизельного топлива", true);
+        SetCell(worksheet, $"A{row + 3}:H{row + 3}", $"Источник выделения № {report.SelectionSource}", true);
+        SetCell(worksheet, $"A{row + 4}:H{row + 4}", "Литература: Методические указания по определению выбросов загрязняющих веществ в атмосферу из резервуаров (утверждены приказом Госкомэкологии России от 08.04.1998 \u2116 199)");
+        row += 6;
+        
+        SetCell(worksheet, $"A{row}:H{row}", "Исходные данные", true);
+        SetCell(worksheet, $"A{row + 1}:D{row + 1}", "Конструкция резервуара");
+        SetCell(worksheet, $"E{row + 1}:H{row + 1}", $"{report.ReservoirType.GetDescription()} ({report.ClimateZone.GetDescription()})");
+
+        SetCell(worksheet, $"A{row + 2}:D{row + 2}", "Объем резервуара, м3");
+        SetCell(worksheet, $"E{row + 2}:H{row + 2}", report.ReservoirVolume);
+
+        SetCell(worksheet, $"A{row + 3}:D{row + 3}", "Количество резервуаров, шт.");
+        SetCell(worksheet, $"E{row + 3}:H{row + 3}", report.ReservoirCount);
+
+        SetCell(worksheet, $"A{row + 4}:D{row + 4}", "Время работы, ч/г");
+        SetCell(worksheet, $"E{row + 4}:H{row + 4}", report.WorkHoursPerYear);
+        
+        SetBorder(worksheet, $"A{row + 1}:H{row + 4}");
+        row += 6;
+        
+        SetCell(worksheet, $"A{row}:H{row}", "Расчет выброса", true);
+        SetCell(worksheet, $"A{row + 1}:D{row + 1}", "Максимальные выбросы паров нефтепродуктов, М (г/с)", true);
+        SetCell(worksheet, $"E{row + 1}:H{row + 1}", "М = (Сpmax \u2219Vсл) : 1200", true);
+        SetCell(worksheet, $"A{row + 2}:D{row + 2}", "Максимальная концентрация паров нефтепродуктов в резервуаре Сpmax, (г/м3) (прил. 15)");
+        SetCell(worksheet, $"E{row + 2}:H{row + 2}", report.VaporConcentration.MaxVaporConcentration);
+        
+        SetCell(worksheet, $"A{row + 3}:D{row + 3}", "Объем слитого нефтепродукта в резервуар,  Vсл (м3)");
+        SetCell(worksheet, $"E{row + 3}:H{row + 3}", report.DrainedVolume);
+        
+        SetCell(worksheet, $"A{row + 4}:D{row + 4}", "Среднее время слива, с");
+        SetCell(worksheet, $"E{row + 4}:H{row + 4}", report.AverageDrainTime);
+        
+        SetCell(worksheet, $"A{row + 5}:D{row + 5}", "Количество закачиваемого в резервуар нефтепродукта в осенне-зимний период Qоз, (м3)");
+        SetCell(worksheet, $"E{row + 5}:H{row + 5}", report.AutumnWinterOilAmount);
+        
+        SetCell(worksheet, $"A{row + 6}:D{row + 6}", "Количество закачиваемого в резервуар нефтепродукта в весенне-летний период Qвл, (м3)");
+        SetCell(worksheet, $"E{row + 6}:H{row + 6}", report.SpringSummerOilAmount);
+        
+        SetCell(worksheet, $"A{row + 7}:D{row + 7}", "Концентрация паров нефтепродуктов при заполнении резервуаров осенне-зимний период, Соз  (г/м3)");
+        SetCell(worksheet, $"E{row + 7}:H{row + 7}", report.VaporConcentration.AutumnWinterVaporConcentration);
+        
+        SetCell(worksheet, $"A{row + 8}:D{row + 8}", "Концентрация паров нефтепродуктов при заполнении резервуаров весенне-летний период, Свл  (г/м3)");
+        SetCell(worksheet, $"E{row + 8}:H{row + 8}", report.VaporConcentration.SpringSummerVaporConcentration);
+        
+        SetCell(worksheet, $"A{row + 9}:D{row + 9}", "Максимальные выбросы паров нефтепродуктов, М (г/с)", true);
+        SetCell(worksheet, $"E{row + 9}:H{row + 9}", report.Emissions.First().MaxVaporEmission, true);
+        
+        SetBorder(worksheet, $"A{row + 1}:H{row + 9}");
+        row += 11;
+        
+        SetCell(worksheet, $"A{row}:D{row}", "Валовый выброс, G (т/г)", true);
+        SetCell(worksheet, $"E{row}:H{row}", "G = Gзак + Gпр", true);
+        
+        SetCell(worksheet, $"A{row + 1}:D{row + 1}", "Годовые выбросы при закачке, Gзак (т/г)");
+        SetCell(worksheet, $"E{row + 1}:H{row + 1}", "Gзак = [(Ср+Сб)\u2219Qоз+(Ср+Сб)\u2219Qвл] \u2219 10-6");
+        
+        SetCell(worksheet, $"A{row + 2}:D{row + 2}", "Годовые выбросы при закачке, Gзак (т/г)");
+        SetCell(worksheet, $"E{row + 2}:H{row + 2}", "Gзак = (Ср\u2219Qоз + Ср\u2219Qвл) \u2219 10-6", true);
+        
+        SetCell(worksheet, $"A{row + 3}:D{row + 3}", "Годовые выбросы при закачке, Gзак (т/г)");
+        SetCell(worksheet, $"E{row + 3}:H{row + 3}", report.Emissions.First().AnnualInjectionEmissions);
+        
+        SetCell(worksheet, $"A{row + 4}:D{row + 4}", "Годовые выбросы при проливе, Gпр (т/г) для дизтоплив");
+        SetCell(worksheet, $"E{row + 4}:H{row + 4}", "Gпр = 50 \u2219 (Qоз + Qвл) \u2219 10-6", true);
+        
+        SetCell(worksheet, $"A{row + 5}:D{row + 5}", "Годовые выбросы при проливе, Gпр (т/г) для дизтоплив");
+        SetCell(worksheet, $"E{row + 5}:H{row + 5}", report.Emissions.First().AnnualIrrigationEmissions);
+        
+        SetCell(worksheet, $"A{row + 6}:D{row + 6}", "Валовый выброс, G (т/г)", true);
+        SetCell(worksheet, $"E{row + 6}:H{row + 6}", report.Emissions.First().AnnualInjectionEmissions + report.Emissions.First().AnnualIrrigationEmissions, true);
+        
+        SetBorder(worksheet, $"A{row}:H{row + 6}");
+        row += 8;
+        
+        SetCell(worksheet, $"A{row}:D{row}", "Максимальный выброс i-го загрязняющего вещества, Мi (г/с)", true);
+        SetCell(worksheet, $"E{row}:H{row}", "Мi = М \u2219 Сi \u2219 10-2", true);
+        
+        SetCell(worksheet, $"A{row + 1}:D{row + 1}", "Валовые выбросы, Gi (т/г)", true);
+        SetCell(worksheet, $"E{row + 1}:H{row + 1}", "Gi = G \u2219 Ci \u2219 10-2", true);
+        
+        SetCell(worksheet, $"A{row + 2}:D{row + 2 + report.Emissions.Count - 1}", "Концентрация i-го загрязняющего вещества,    Сi % мас. (прил. 14)");
+        row++;
+        
+        foreach (var emission in report.Emissions)
+        {
+            row++;
+            SetCell(worksheet, $"E{row}:G{row}", emission.PollutantInfo.ShortName);
+            SetCell(worksheet, $"H{row}", emission.PollutantInfo.SpecificEmission, numberFormat: "0.##");
+        }
+        
+        SetBorder(worksheet, $"A{row - report.Emissions.Count - 1}:H{row}");
+        row += 2;
+        
+        SetCell(worksheet, $"A{row}:H{row}", "Итого по источнику", true);
+        SetCell(worksheet, $"A{row + 1}:D{row + 1}", "Наименование загрязняющего вещества", true);
+        SetCell(worksheet, $"E{row + 1}:F{row + 1}", "Максимальный выброс, г/с", true);
+        SetCell(worksheet, $"G{row + 1}:H{row + 1}", "Валовый выброс т/г", true);
+        row++;
+        
+        foreach (var emission in report.Emissions)
+        {
+            row++;
+            SetCell(worksheet, $"A{row}", emission.PollutantInfo.Code);
+            SetCell(worksheet, $"B{row}:D{row}", emission.PollutantInfo.Name);
+            SetCell(worksheet, $"E{row}:F{row}", emission.MaximumEmission);
+            SetCell(worksheet, $"G{row}:H{row}", emission.GrossEmission);
+        }
+        
+        SetBorder(worksheet, $"A{row - report.Emissions.Count}:H{row}");
+        
+        workbook.SaveAs($"/home/xjasz/Desktop/{fileName}.xlsx");
+    }
+
+    private static void SetCell(IXLWorksheet worksheet, string address, object value, bool bold = false, XLAlignmentHorizontalValues horizontal = XLAlignmentHorizontalValues.Left, string numberFormat = "0.######")
     {
         if (address.Contains(':'))
         {
@@ -126,7 +250,7 @@ public class OutputService : IOutputService
             _ => cell.Value
         };
 
-        cell.Style.NumberFormat.Format = "0.######";
+        cell.Style.NumberFormat.Format = numberFormat;
         cell.Style.Alignment.Horizontal = horizontal;
         cell.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
         cell.Style.Font.Bold = bold;

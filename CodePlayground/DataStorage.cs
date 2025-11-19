@@ -1,3 +1,4 @@
+using System.Data.SqlTypes;
 using CodePlayground.Enums;
 using CodePlayground.Models;
 
@@ -41,6 +42,85 @@ public static class DataStorage
             Name = "Серы диоксид",
             Pollutant = Pollutant.SO2,
             SpecificEmission = 0.036f
+        },
+        new PollutantInfo
+        {
+            Code = 2754,
+            Name = "Углеводороды предельные C12 - C19 (растворители РПК-240, РПК-280)",
+            ShortName = "углеводороды",
+            Pollutant = Pollutant.RPK240280,
+            SpecificEmission = 99.72f
+        },
+        new PollutantInfo
+        {
+            Code = 333,
+            Name = "Сероводород (дигидросульфид; водород сернистый; гидросульфид)",
+            ShortName = "дигидросульфид",
+            Pollutant = Pollutant.H2S,
+            SpecificEmission = 0.28f
         }
     };
+
+    public static readonly Dictionary<ReservoirType, Dictionary<ClimateZone, Dictionary<OilProduct, VaporConcentrationRecord>>>
+        VaporConcentration = new()
+        {
+            {
+                ReservoirType.Ground, new Dictionary<ClimateZone, Dictionary<OilProduct, VaporConcentrationRecord>>
+                {
+                    {
+                        ClimateZone.First, new Dictionary<OilProduct, VaporConcentrationRecord>
+                        {
+                            { OilProduct.AutomobileGasoline, new VaporConcentrationRecord(464f, 205f, 248f) },
+                            { OilProduct.DieselFuel, new VaporConcentrationRecord(1.49f, 0.79f, 1.06f) },
+                            { OilProduct.Oils, new VaporConcentrationRecord(0.16f, 0.10f, 0.10f) }
+                        }
+                    },
+                    {
+                        ClimateZone.Second, new Dictionary<OilProduct, VaporConcentrationRecord>
+                        {
+                            { OilProduct.AutomobileGasoline, new VaporConcentrationRecord(580f, 250f, 310f) },
+                            { OilProduct.DieselFuel, new VaporConcentrationRecord(1.86f, 0.96f, 1.32f) },
+                            { OilProduct.Oils, new VaporConcentrationRecord(0.20f, 0.12f, 0.12f) }
+                        }
+                    },
+                    {
+                        ClimateZone.Third, new Dictionary<OilProduct, VaporConcentrationRecord>
+                        {
+                            { OilProduct.AutomobileGasoline, new VaporConcentrationRecord(701.8f, 310f, 375.1f) },
+                            { OilProduct.DieselFuel, new VaporConcentrationRecord(2.25f, 1.19f, 1.60f) },
+                            { OilProduct.Oils, new VaporConcentrationRecord(0.24f, 0.15f, 0.15f) }
+                        }
+                    }
+                }
+            },
+            {
+                ReservoirType.Buried, new Dictionary<ClimateZone, Dictionary<OilProduct, VaporConcentrationRecord>>
+                {
+                    {
+                        ClimateZone.First, new Dictionary<OilProduct, VaporConcentrationRecord>
+                        {
+                            { OilProduct.AutomobileGasoline, new VaporConcentrationRecord(384f, 172.2f, 255f) },
+                            { OilProduct.DieselFuel, new VaporConcentrationRecord(1.24f, 0.66f, 0.88f) },
+                            { OilProduct.Oils, new VaporConcentrationRecord(0.13f, 0.08f, 0.08f) }
+                        }
+                    },
+                    {
+                        ClimateZone.Second, new Dictionary<OilProduct, VaporConcentrationRecord>
+                        {
+                            { OilProduct.AutomobileGasoline, new VaporConcentrationRecord(480f, 210.2f, 255f) },
+                            { OilProduct.DieselFuel, new VaporConcentrationRecord(1.55f, 0.80f, 1.10f) },
+                            { OilProduct.Oils, new VaporConcentrationRecord(0.16f, 0.10f, 0.10f) }
+                        }
+                    },
+                    {
+                        ClimateZone.Third, new Dictionary<OilProduct, VaporConcentrationRecord>
+                        {
+                            { OilProduct.AutomobileGasoline, new VaporConcentrationRecord(508f, 260.4f, 308.5f) },
+                            { OilProduct.DieselFuel, new VaporConcentrationRecord(1.88f, 0.99f, 1.33f) },
+                            { OilProduct.Oils, new VaporConcentrationRecord(0.19f, 0.12f, 0.12f) }
+                        }
+                    }
+                }
+            }
+        };
 }
