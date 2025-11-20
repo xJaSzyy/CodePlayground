@@ -12,7 +12,7 @@ class Program
         var emissionService = new EmissionService();
         var outputService = new OutputService();
 
-        /*var gasolineGeneratorEmissionsReport = new GasolineGeneratorEmissionsReport
+        var gasolineGeneratorEmissionsReport = new GasolineGeneratorEmissionsReport
         {
             SelectionSource = "001",
             PollutionSource = "0007",
@@ -26,9 +26,9 @@ class Program
             gasolineGeneratorEmissionsReport.WorkHoursPerDay, gasolineGeneratorEmissionsReport.WorkDaysPerYear,
             gasolineGeneratorEmissionsReport.GeneratorCount, gasolineGeneratorEmissionsReport.SameGeneratorCount);
 
-        outputService.CreateGasolineGeneratorEmissionsReport(gasolineGeneratorEmissionsReport, outputFile);*/
+        outputService.CreateGasolineGeneratorEmissionsReport(gasolineGeneratorEmissionsReport, outputFile);
 
-        /*var reservoirsEmissionsReport = new ReservoirsEmissionsReport
+        var reservoirsEmissionsReport = new ReservoirsEmissionsReport
         {
             SelectionSource = "001",
             PollutionSource = "0016",
@@ -51,9 +51,9 @@ class Program
             reservoirsEmissionsReport.AutumnWinterOilAmount, reservoirsEmissionsReport.SpringSummerOilAmount,
             reservoirsEmissionsReport.DrainedVolume, reservoirsEmissionsReport.AverageDrainTime);
 
-        outputService.CreateReservoirsEmissionsReport(reservoirsEmissionsReport, outputFile);*/
+        outputService.CreateReservoirsEmissionsReport(reservoirsEmissionsReport, outputFile);
 
-        /*var duringMetalMachiningEmissionsReport = new DuringMetalMachiningEmissionsReport
+        var duringMetalMachiningEmissionsReport = new DuringMetalMachiningEmissionsReport
         {
             SelectionSource = "001",
             PollutionSource = "6002",
@@ -67,7 +67,7 @@ class Program
             duringMetalMachiningEmissionsReport.WorkDaysPerYear);
 
         outputService.CreateDuringMetalMachiningEmissionsReport(duringMetalMachiningEmissionsReport,
-            outputFile);*/
+            outputFile);
 
         var duringWeldingOperationsEmissionsReport = new DuringWeldingOperationsEmissionsReport
         {

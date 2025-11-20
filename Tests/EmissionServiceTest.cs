@@ -101,4 +101,28 @@ public class EmissionServiceTest
             Assert.That((float)Math.Round(result.GrossEmission, 6), Is.EqualTo(expectedGrossEmission));
         });
     }
+    
+    [TestCase(Pollutant.Fe2O3, 241.36f, 365, 0.00061f, 0.000802f)]
+    [TestCase(Pollutant.MnO2, 241.36f, 365, 0.000108f, 0.000142f)]
+    [TestCase(Pollutant.FluorideGases, 241.36f, 365, 0.000025f, 0.000033f)]
+    public void CalculateDuringWeldingOperationsEmissions_ShouldReturnCorrectValues(Pollutant pollutant, float electrodesPerYear, int workDaysPerYear, float expectedMaximumEmission, float expectedGrossEmission)
+    {
+        // Arrange
+        var info = DataStorage.PollutantInfos.First(i => i.Pollutant == pollutant);
+        
+        // Act
+        var result = _service.CalculateDuringWeldingOperationsEmissionsBatch(new List<Pollutant> { pollutant }, electrodesPerYear, workDaysPerYear);
+
+        // Assert
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Emissions.First().PollutantInfo.Code, Is.EqualTo(info.Code));
+            Assert.That(result.Emissions.First().PollutantInfo.Name, Is.EqualTo(info.Name));
+            Assert.That(result.Emissions.First().PollutantInfo.ShortName, Is.EqualTo(info.ShortName));
+            Assert.That(result.Emissions.First().PollutantInfo.Pollutant, Is.EqualTo(info.Pollutant));
+            Assert.That(result.Emissions.First().PollutantInfo.SpecificEmission, Is.EqualTo(info.SpecificEmission));
+            Assert.That((float)Math.Round(result.Emissions.First().MaximumEmission, 6), Is.EqualTo(expectedMaximumEmission));
+            Assert.That((float)Math.Round(result.Emissions.First().GrossEmission, 6), Is.EqualTo(expectedGrossEmission));
+        });
+    }
 }

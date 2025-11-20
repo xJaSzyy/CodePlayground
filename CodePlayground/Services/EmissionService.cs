@@ -74,7 +74,7 @@ public class EmissionService : IEmissionService
 
         foreach (var pollutant in pollutants.OrderBy(p => (int)p))
         {
-            result.Emissions.Add(CalculateDuringWeldingOperationsEmissions(pollutant, electrodesPerYear, workDaysPerYear, normElectrodesPerYear, materialsConsumption));
+            result.Emissions.Add(CalculateDuringWeldingOperationsEmissions(pollutant, workDaysPerYear, materialsConsumption));
         }
 
         return result;
@@ -127,14 +127,14 @@ public class EmissionService : IEmissionService
         return result;
     }
     
-    private static EmissionsResult CalculateDuringWeldingOperationsEmissions(Pollutant pollutant, float electrodesPerYear, int workDaysPerYear, float normElectrodesPerYear, float materialsConsumption)
+    private static EmissionsResult CalculateDuringWeldingOperationsEmissions(Pollutant pollutant, int workDaysPerYear, float materialsConsumption)
     {
         var pollutantInfo = DataStorage.PollutantInfos.First(i => i.Pollutant == pollutant);
         pollutantInfo.SpecificEmission = DataStorage.SpecificEmissionsByElectrodes.GetValueOrDefault(pollutant, 0f);
         
-        // TODO: Кгр = 0.2, а должен от чего-то зависеть, разобраться от чего 
-        var maximumEmission = materialsConsumption * pollutantInfo.SpecificEmission * 0.2f / 3600;
-        var grossEmission = 1;
+        // TODO: Кгр = 0.4, а должен от чего-то зависеть, разобраться от чего 
+        var maximumEmission = materialsConsumption * pollutantInfo.SpecificEmission * 0.4f / 3600;
+        var grossEmission = maximumEmission * workDaysPerYear * 3.6f * 1e-3f;
         
         var result = new EmissionsResult
         {
