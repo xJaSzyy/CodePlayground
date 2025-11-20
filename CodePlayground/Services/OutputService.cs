@@ -9,11 +9,11 @@ public class OutputService : IOutputService
 {
     public void CreateGasolineGeneratorEmissionsReport(GasolineGeneratorEmissionsReport report, string outputFile)
     {
-        var fileName = $"ИЗА {report.PollutionSource}_{report.SelectionSource} Бензогенератор";
-        outputFile += $"/{fileName}.xlsx";
+        var fileName = $"ИЗА {report.PollutionSource}_{report.SelectionSource}";
         
         var workbook = new XLWorkbook();
         var worksheet = workbook.Worksheets.Add(fileName);
+        outputFile += $"/{fileName} Бензогенератор.xlsx";
 
         var row = 1;
         
@@ -110,11 +110,11 @@ public class OutputService : IOutputService
 
     public void CreateReservoirsEmissionsReport(ReservoirsEmissionsReport report, string outputFile)
     {
-        var fileName = $"ИЗА {report.PollutionSource}_{report.SelectionSource} Резервуары";
-        outputFile += $"/{fileName}.xlsx";
+        var fileName = $"ИЗА {report.PollutionSource}_{report.SelectionSource}";
         
         var workbook = new XLWorkbook();
         var worksheet = workbook.Worksheets.Add(fileName);
+        outputFile += $"/{fileName} Резервуары.xlsx";
 
         var row = 1;
         
@@ -236,11 +236,11 @@ public class OutputService : IOutputService
 
     public void CreateDuringMetalMachiningEmissionsReport(DuringMetalMachiningEmissionsReport report, string outputFile)
     {
-        var fileName = $"ИЗА {report.PollutionSource}_{report.SelectionSource} {report.MetalMachiningMachineType.GetDescription()}";
-        outputFile += $"/{fileName}.xlsx";
+        var fileName = $"ИЗА {report.PollutionSource}_{report.SelectionSource}";
         
         var workbook = new XLWorkbook();
-        var worksheet = workbook.Worksheets.Add(fileName.Length > 31 ? fileName[..31] : fileName);
+        var worksheet = workbook.Worksheets.Add(fileName);
+        outputFile += $"/{fileName} {report.MetalMachiningMachineType.GetDescription()}.xlsx";
 
         var row = 1;
         
@@ -301,6 +301,100 @@ public class OutputService : IOutputService
         
         workbook.SaveAs(outputFile);
     }
+    
+    public void CreateDuringWeldingOperationsEmissionsReport(DuringWeldingOperationsEmissionsReport report, string outputFile)
+    {
+        var fileName = $"ИЗА {report.PollutionSource}_{report.SelectionSource}";
+        
+        var workbook = new XLWorkbook();
+        var worksheet = workbook.Worksheets.Add(fileName);
+        outputFile += $"/{fileName} Сварочный аппарат.xlsx";
+
+        var row = 1;
+        
+        SetCell(worksheet, $"A{row}:G{row}", "Расчет выбросов загрязняющих веществ при сварочных работах", true, XLAlignmentHorizontalValues.Center);
+        SetCell(worksheet, $"A{row + 2}:G{row + 2}", $"Источник загрязнения № {report.PollutionSource}, Сварочный аппарат", true);
+        SetCell(worksheet, $"A{row + 3}:G{row + 3}", $"Источник выделения № {report.SelectionSource}", true);
+        SetCell(worksheet, $"A{row + 4}:G{row + 4}", "Литература: \"Методика расчета выделений (выбросов) загрязняющих веществ в атмосферу при сварочных работах (на основе удельных показателей)\", Госкомэкологии России от 14.04.1997 \u2116 158) ");
+        row += 6;
+        
+        SetCell(worksheet, $"A{row}:G{row}", "Исходные данные", true);
+        SetCell(worksheet, $"A{row + 1}:B{row + 1}", "Марка электродов");
+        SetCell(worksheet, $"C{row + 1}:G{row + 1}", "ОК 46.00 (по аналогу МР-3)", true, XLAlignmentHorizontalValues.Center);
+        
+        SetCell(worksheet, $"A{row + 2}:B{row + 2}", "Расход сварочных электродов в год, кг");
+        SetCell(worksheet, $"C{row + 2}:G{row + 2}", report.ElectrodesPerYear, true, XLAlignmentHorizontalValues.Center);
+        
+        SetCell(worksheet, $"A{row + 3}:B{row + 3}", "Расход сварочных электродов в год с учетом нормативного образования огарков, кг");
+        SetCell(worksheet, $"C{row + 3}:G{row + 3}", "Вэ=G\u2219(100-н)\u221910-2", true, XLAlignmentHorizontalValues.Center);
+        
+        SetCell(worksheet, $"A{row + 4}:B{row + 4}", "Расход сварочных электродов в год с учетом нормативного образования огарков, кг");
+        SetCell(worksheet, $"C{row + 4}:G{row + 4}", report.Result.NormElectrodesPerYear, true, XLAlignmentHorizontalValues.Center);
+        
+        SetCell(worksheet, $"A{row + 5}:B{row + 5}", "Расход сварочных материалов, кг/час (B)");
+        UpdateCell(worksheet, $"A{row + 5}:B{row + 5}");
+        SetCell(worksheet, $"C{row + 5}:G{row + 5}", report.Result.MaterialsConsumption, true, XLAlignmentHorizontalValues.Center);
+        
+        SetCell(worksheet, $"A{row + 6}:B{row + 6}", "Время работы сварочного оборудования, ч/год (T)");
+        UpdateCell(worksheet, $"A{row + 6}:B{row + 6}");
+        SetCell(worksheet, $"C{row + 6}:G{row + 6}", report.WorkDaysPerYear, true, XLAlignmentHorizontalValues.Center);
+        
+        SetCell(worksheet, $"A{row + 7}:B{row + 7}", "Наименование загрязняющего вещества");
+        SetCell(worksheet, $"A{row + 8}:B{row + 8}", "Удельный показатель выделения i-го загрязняющего вещества на единицу массы расходуемых сырья и материалов, г/кг (КМ i)");
+        UpdateCell(worksheet, $"A{row + 8}:B{row + 8}", 6);
+
+        var column = 'B';
+        foreach (var emission in report.Result.Emissions)
+        {
+            column = GetNextLetter(column);
+            SetCell(worksheet, $"{column}{row + 7}", $"{emission.PollutantInfo.Code} {emission.PollutantInfo.Name}", true, XLAlignmentHorizontalValues.Center);
+            SetCell(worksheet, $"{column}{row + 8}", emission.PollutantInfo.SpecificEmission,  horizontal: XLAlignmentHorizontalValues.Center);
+        }
+
+        if (report.Result.Emissions.Count < 5)
+        {
+            worksheet.Range($"{column}{row + 7}:G{row + 7}").Merge();
+            worksheet.Range($"{column}{row + 8}:G{row + 8}").Merge();
+        }
+
+        SetCell(worksheet, $"A{row + 9}:B{row + 10}", "Эффективность местной установки очистки газов, в долях единицы (ɳ):");
+        UpdateCell(worksheet, $"A{row + 9}:B{row + 10}", 4);
+        SetCell(worksheet, $"C{row + 9}:D{row + 9}", "для твердых веществ:");
+        SetCell(worksheet, $"C{row + 10}:D{row + 10}", "для газообразных веществ:");
+        SetCell(worksheet, $"E{row + 9}:G{row + 9}", 0, horizontal: XLAlignmentHorizontalValues.Center);
+        SetCell(worksheet, $"E{row + 10}:G{row + 10}", 0, horizontal: XLAlignmentHorizontalValues.Center);
+        
+        SetBorder(worksheet, $"A{row + 1}:G{row + 10}");
+        row += 12;
+        
+        SetCell(worksheet, $"A{row}:B{row}", "Наименование", true);
+        SetCell(worksheet, $"C{row}:G{row}", "Расчетная формула", true);
+        SetCell(worksheet, $"A{row + 1}:B{row + 1}", "Максимальный выброс, Ммi (г/с) рассчитывается по формуле:");
+        SetCell(worksheet, $"C{row + 1}:G{row + 1}", "Ммi=B\u2219Кмi\u2219(1-ɳ)\u2219(1-ɳ1i)\u2219Кгр/3600", true);
+        SetCell(worksheet, $"A{row + 2}:B{row + 2}", "Валовый выброс, МГ1Мi, (т/г) рассчитывается по формуле:");
+        SetCell(worksheet, $"C{row + 2}:G{row + 2}", "МГ1Мi = 3,6\u2219MМi\u2219Т\u22190.001", true);
+        SetBorder(worksheet, $"A{row}:G{row + 2}");
+        row += 4;
+        
+        SetCell(worksheet, $"A{row}:G{row}", "Результаты расчетов", true);
+        SetCell(worksheet, $"A{row + 1}", "Код ЗВ", true, XLAlignmentHorizontalValues.Center);
+        SetCell(worksheet, $"B{row + 1}:E{row + 1}", "Наименование ЗВ", true, XLAlignmentHorizontalValues.Center);
+        SetCell(worksheet, $"F{row + 1}", "Максимальный выброс, г/с", true, XLAlignmentHorizontalValues.Center);
+        SetCell(worksheet, $"G{row + 1}", "Валовый выброс, т/г", true, XLAlignmentHorizontalValues.Center);
+        row++;
+        
+        foreach (var emission in report.Result.Emissions)
+        {
+            row++;
+            SetCell(worksheet, $"A{row}", emission.PollutantInfo.Code, horizontal: XLAlignmentHorizontalValues.Center);
+            SetCell(worksheet, $"B{row}:E{row}", emission.PollutantInfo.Name, horizontal: XLAlignmentHorizontalValues.Center);
+            SetCell(worksheet, $"F{row}", emission.MaximumEmission, horizontal: XLAlignmentHorizontalValues.Center);
+            SetCell(worksheet, $"G{row}", emission.GrossEmission, horizontal: XLAlignmentHorizontalValues.Center);
+        }
+        SetBorder(worksheet, $"A{row - report.Result.Emissions.Count}:G{row}");
+        
+        workbook.SaveAs(outputFile);
+    }
 
     private static void SetCell(IXLWorksheet worksheet, string address, object value, bool bold = false, XLAlignmentHorizontalValues horizontal = XLAlignmentHorizontalValues.Left, string numberFormat = "0.######")
     {
@@ -329,10 +423,34 @@ public class OutputService : IOutputService
         cell.Style.Font.FontSize = 12;
     }
 
+    private static void UpdateCell(IXLWorksheet worksheet, string address, int boldLength = 3)
+    {
+        if (address.Contains(':'))
+        {
+            address = address.Split(':')[0];
+        }
+        
+        var cell = worksheet.Cell(address);
+        var richText = cell.CreateRichText();
+        var length = richText.Text.Length;
+        richText.Substring(length - boldLength, boldLength).SetBold();
+    }
+
     private static void SetBorder(IXLWorksheet worksheet, string address, XLBorderStyleValues style = XLBorderStyleValues.Thin)
     {
         var range = worksheet.Range(address);
         range.Style.Border.OutsideBorder = style;
         range.Style.Border.InsideBorder = XLBorderStyleValues.Thin;
     }
+    
+    private static char GetNextLetter(char c)
+    {
+        return c switch
+        {
+            'z' => 'a',
+            'Z' => 'A',
+            _ => (char)(c + 1)
+        };
+    }
+
 }

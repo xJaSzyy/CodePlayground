@@ -8,5 +8,5 @@ public class ReservoirsEmissionsBatchResult
     
     public float AnnualIrrigationEmissions { get; set; }
     
-    public List<EmissionsResult> Emissions { get; set; } = null!;
+    public List<EmissionsResult> Emissions { get; set; } = new();
 }

@@ -59,6 +59,27 @@ public class EmissionService : IEmissionService
         return result;
     }
 
+    public DuringWeldingOperationsEmissionsBatchResult CalculateDuringWeldingOperationsEmissionsBatch(List<Pollutant> pollutants,
+        float electrodesPerYear, int workDaysPerYear)
+    {
+        var normElectrodesPerYear = electrodesPerYear * (100 - 15) * 1e-2f;
+        var materialsConsumption = normElectrodesPerYear / workDaysPerYear;
+        
+        var result = new DuringWeldingOperationsEmissionsBatchResult
+        {
+            NormElectrodesPerYear = normElectrodesPerYear,
+            MaterialsConsumption = materialsConsumption,
+            Emissions = new List<EmissionsResult>()
+        };
+
+        foreach (var pollutant in pollutants.OrderBy(p => (int)p))
+        {
+            result.Emissions.Add(CalculateDuringWeldingOperationsEmissions(pollutant, electrodesPerYear, workDaysPerYear, normElectrodesPerYear, materialsConsumption));
+        }
+
+        return result;
+    }
+
     #endregion
 
     #region Private
@@ -103,6 +124,25 @@ public class EmissionService : IEmissionService
             GrossEmission = grossEmission * pollutantInfo.SpecificEmission * 1e-2f,
         };
 
+        return result;
+    }
+    
+    private static EmissionsResult CalculateDuringWeldingOperationsEmissions(Pollutant pollutant, float electrodesPerYear, int workDaysPerYear, float normElectrodesPerYear, float materialsConsumption)
+    {
+        var pollutantInfo = DataStorage.PollutantInfos.First(i => i.Pollutant == pollutant);
+        pollutantInfo.SpecificEmission = DataStorage.SpecificEmissionsByElectrodes.GetValueOrDefault(pollutant, 0f);
+        
+        // TODO: Кгр = 0.2, а должен от чего-то зависеть, разобраться от чего 
+        var maximumEmission = materialsConsumption * pollutantInfo.SpecificEmission * 0.2f / 3600;
+        var grossEmission = 1;
+        
+        var result = new EmissionsResult
+        {
+            PollutantInfo = pollutantInfo,
+            MaximumEmission = maximumEmission,
+            GrossEmission = grossEmission
+        };
+        
         return result;
     }
 

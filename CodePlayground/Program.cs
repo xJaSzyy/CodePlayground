@@ -7,10 +7,12 @@ class Program
 {
     private static async Task Main()
     {
+        const string outputFile = "/home/xjasz/Desktop";
+        
         var emissionService = new EmissionService();
         var outputService = new OutputService();
 
-        var gasolineGeneratorEmissionsReport = new GasolineGeneratorEmissionsReport
+        /*var gasolineGeneratorEmissionsReport = new GasolineGeneratorEmissionsReport
         {
             SelectionSource = "001",
             PollutionSource = "0007",
@@ -24,9 +26,9 @@ class Program
             gasolineGeneratorEmissionsReport.WorkHoursPerDay, gasolineGeneratorEmissionsReport.WorkDaysPerYear,
             gasolineGeneratorEmissionsReport.GeneratorCount, gasolineGeneratorEmissionsReport.SameGeneratorCount);
 
-        outputService.CreateGasolineGeneratorEmissionsReport(gasolineGeneratorEmissionsReport, "/home/xjasz/Desktop");
+        outputService.CreateGasolineGeneratorEmissionsReport(gasolineGeneratorEmissionsReport, outputFile);*/
 
-        var reservoirsEmissionsReport = new ReservoirsEmissionsReport
+        /*var reservoirsEmissionsReport = new ReservoirsEmissionsReport
         {
             SelectionSource = "001",
             PollutionSource = "0016",
@@ -41,15 +43,17 @@ class Program
             DrainedVolume = 150f,
             AverageDrainTime = 1200f,
         };
-        reservoirsEmissionsReport.VaporConcentration = DataStorage.VaporConcentration[reservoirsEmissionsReport.ReservoirType][reservoirsEmissionsReport.ClimateZone][reservoirsEmissionsReport.OilProduct];
+        reservoirsEmissionsReport.VaporConcentration =
+            DataStorage.VaporConcentration[reservoirsEmissionsReport.ReservoirType][
+                reservoirsEmissionsReport.ClimateZone][reservoirsEmissionsReport.OilProduct];
         reservoirsEmissionsReport.Result = emissionService.CalculateReservoirsEmissionsBatch(
             new List<Pollutant> { Pollutant.RPK240280, Pollutant.H2S }, reservoirsEmissionsReport.VaporConcentration,
             reservoirsEmissionsReport.AutumnWinterOilAmount, reservoirsEmissionsReport.SpringSummerOilAmount,
             reservoirsEmissionsReport.DrainedVolume, reservoirsEmissionsReport.AverageDrainTime);
 
-        outputService.CreateReservoirsEmissionsReport(reservoirsEmissionsReport, "/home/xjasz/Desktop");
+        outputService.CreateReservoirsEmissionsReport(reservoirsEmissionsReport, outputFile);*/
 
-        var duringMetalMachiningEmissionsReport = new DuringMetalMachiningEmissionsReport
+        /*var duringMetalMachiningEmissionsReport = new DuringMetalMachiningEmissionsReport
         {
             SelectionSource = "001",
             PollutionSource = "6002",
@@ -58,8 +62,27 @@ class Program
             MachiningMachineCount = 1,
             SameMachiningMachineCount = 1
         };
-        duringMetalMachiningEmissionsReport.Result = emissionService.CalculateDuringMetalMachiningEmissions(duringMetalMachiningEmissionsReport.MetalMachiningMachineType, duringMetalMachiningEmissionsReport.WorkDaysPerYear);
-        
-        outputService.CreateDuringMetalMachiningEmissionsReport(duringMetalMachiningEmissionsReport, "/home/xjasz/Desktop");
+        duringMetalMachiningEmissionsReport.Result = emissionService.CalculateDuringMetalMachiningEmissions(
+            duringMetalMachiningEmissionsReport.MetalMachiningMachineType,
+            duringMetalMachiningEmissionsReport.WorkDaysPerYear);
+
+        outputService.CreateDuringMetalMachiningEmissionsReport(duringMetalMachiningEmissionsReport,
+            outputFile);*/
+
+        var duringWeldingOperationsEmissionsReport = new DuringWeldingOperationsEmissionsReport
+        {
+            SelectionSource = "001",
+            PollutionSource = "0006",
+            ElectrodesPerYear = 241.36f,
+            WorkDaysPerYear = 365
+        };
+        duringWeldingOperationsEmissionsReport.Result =
+            emissionService.CalculateDuringWeldingOperationsEmissionsBatch(
+                new List<Pollutant> { Pollutant.Fe2O3, Pollutant.MnO2, Pollutant.FluorideGases },
+                duringWeldingOperationsEmissionsReport.ElectrodesPerYear,
+                duringWeldingOperationsEmissionsReport.WorkDaysPerYear);
+
+        outputService.CreateDuringWeldingOperationsEmissionsReport(duringWeldingOperationsEmissionsReport,
+            outputFile);
     }
 }

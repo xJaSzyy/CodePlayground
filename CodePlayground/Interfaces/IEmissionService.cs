@@ -37,4 +37,15 @@ public interface IEmissionService
     /// <param name="workDaysPerYear">Годовой фонд времени работы оборудования, ч</param>
     /// <returns></returns>
     public EmissionsResult CalculateDuringMetalMachiningEmissions(MetalMachiningMachineType metalMachiningMachineType, int workDaysPerYear);
+
+    /// <summary>
+    /// Расчет выбросов загрязняющих веществ при сварочных работах
+    /// </summary>
+    /// <param name="pollutants">Список загрязняющих веществ</param>
+    /// <param name="electrodesPerYear">Расход сварочных электродов в год, кг</param>
+    /// <param name="workDaysPerYear">Время работы сварочного оборудования, ч/год (Т)</param>
+    /// <returns></returns>
+    public DuringWeldingOperationsEmissionsBatchResult CalculateDuringWeldingOperationsEmissionsBatch(
+        List<Pollutant> pollutants,
+        float electrodesPerYear, int workDaysPerYear);
 }

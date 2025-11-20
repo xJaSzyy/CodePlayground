@@ -63,22 +63,19 @@ public static class DataStorage
         {
             Code = 123,
             Name = "диЖелезо триоксид (железа оксид; железо сесквиоксид) /в пересчете на железо/",
-            Pollutant = Pollutant.Fe2O3,
-            SpecificEmission = 9.77f
+            Pollutant = Pollutant.Fe2O3
         },
         new PollutantInfo
         {
             Code = 143,
             Name = "Марганец и его соединения /в пересчете на марганец (IV) оксид/",
-            Pollutant = Pollutant.MnO2,
-            SpecificEmission = 1.73f
+            Pollutant = Pollutant.MnO2
         },
         new PollutantInfo
         {
             Code = 342,
             Name = "Фториды газообразные /в пересчете на фтор/: гидрофторид (водород фторид, фторводород); кремний тетрафторид",
-            Pollutant = Pollutant.FluorideGases,
-            SpecificEmission = 0.4f
+            Pollutant = Pollutant.FluorideGases
         }
     };
 
@@ -150,5 +147,12 @@ public static class DataStorage
         { MetalMachiningMachineType.Drilling, 0.007f },
         { MetalMachiningMachineType.Milling, 0.097f },
         { MetalMachiningMachineType.Cutting, 0.203f }
+    };
+    
+    public static readonly Dictionary<Pollutant, float> SpecificEmissionsByElectrodes = new()
+    {
+        { Pollutant.Fe2O3, 9.77f },
+        { Pollutant.MnO2, 1.73f },
+        { Pollutant.FluorideGases, 0.40f }
     };
 }
