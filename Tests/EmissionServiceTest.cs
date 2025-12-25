@@ -1,6 +1,7 @@
 using CodePlayground;
 using CodePlayground.Enums;
 using CodePlayground.Interfaces;
+using CodePlayground.Models;
 using CodePlayground.Services;
 
 namespace Tests;
@@ -124,5 +125,75 @@ public class EmissionServiceTest
             Assert.That((float)Math.Round(result.Emissions.First().MaximumEmission, 6), Is.EqualTo(expectedMaximumEmission));
             Assert.That((float)Math.Round(result.Emissions.First().GrossEmission, 6), Is.EqualTo(expectedGrossEmission));
         });
+    }
+    
+    /*[TestCase(1, 365, 1, 1, , )]
+    [TestCase(Pollutant.CH, 1, 365, 1, 1, )]
+    [TestCase(Pollutant.NO2, 1, 365, 1, 1, )]
+    [TestCase(Pollutant.NO, 1, 365, 1, 1, )]
+    [TestCase(Pollutant.SO2, 1, 365, 1, 1, )]*/
+    [Test]
+    public void CalculateGasolineGeneratorEmissionsBatch_ShouldReturnCorrectValues()
+    {
+        // Arrange
+        var workHoursPerDay = 1;
+        var workDaysPerYear = 365;
+        var generatorCount = 1;
+        var sameGeneratorCount = 1;
+        var pollutants = new List<Pollutant> { Pollutant.CO, Pollutant.CH, Pollutant.NO2, Pollutant.NO, Pollutant.SO2 };
+        var expectedEmissionsResult = new List<EmissionsResult>
+        {
+            new()
+            {
+                PollutantInfo = DataStorage.PollutantInfos.First(i => i.Pollutant == Pollutant.CO),
+                MaximumEmission = 0.002604f,
+                GrossEmission = 0.003422f
+            },
+            new()
+            {
+                PollutantInfo = DataStorage.PollutantInfos.First(i => i.Pollutant == Pollutant.CH),
+                MaximumEmission = 0.000347f,
+                GrossEmission = 0.000456f
+            },
+            new()
+            {
+                PollutantInfo = DataStorage.PollutantInfos.First(i => i.Pollutant == Pollutant.NO2),
+                MaximumEmission = 0.000039f,
+                GrossEmission = 0.000051f
+            },
+            new()
+            {
+                PollutantInfo = DataStorage.PollutantInfos.First(i => i.Pollutant == Pollutant.NO),
+                MaximumEmission = 0.000006f,
+                GrossEmission = 0.000008f
+            },
+            new()
+            {
+                PollutantInfo = DataStorage.PollutantInfos.First(i => i.Pollutant == Pollutant.SO2),
+                MaximumEmission = 0.000012f,
+                GrossEmission = 0.000016f
+            }
+        };
+        
+        // Act
+        var result = _service.CalculateGasolineGeneratorEmissionsBatch(pollutants, workHoursPerDay, workDaysPerYear, generatorCount, sameGeneratorCount);
+
+        // Assert
+        Assert.That(result, Has.Count.EqualTo(expectedEmissionsResult.Count));
+        foreach (var actualResult in result)
+        {
+            var expectedResult = expectedEmissionsResult.FirstOrDefault(e => e.PollutantInfo.Code == actualResult.PollutantInfo.Code);
+            Assert.That(expectedResult, Is.Not.Null);
+            Assert.Multiple(() =>
+            {
+                Assert.That(actualResult.PollutantInfo.Code, Is.EqualTo(expectedResult.PollutantInfo.Code));
+                Assert.That(actualResult.PollutantInfo.Name, Is.EqualTo(expectedResult.PollutantInfo.Name));
+                Assert.That(actualResult.PollutantInfo.ShortName, Is.EqualTo(expectedResult.PollutantInfo.ShortName));
+                Assert.That(actualResult.PollutantInfo.Pollutant, Is.EqualTo(expectedResult.PollutantInfo.Pollutant));
+                Assert.That(actualResult.PollutantInfo.SpecificEmission, Is.EqualTo(expectedResult.PollutantInfo.SpecificEmission));
+                Assert.That((float)Math.Round(actualResult.MaximumEmission, 6), Is.EqualTo(expectedResult.MaximumEmission));
+                Assert.That((float)Math.Round(actualResult.GrossEmission, 6), Is.EqualTo(expectedResult.GrossEmission));
+            });
+        }
     }
 }

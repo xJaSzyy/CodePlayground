@@ -452,5 +452,4 @@ public class OutputService : IOutputService
             _ => (char)(c + 1)
         };
     }
-
 }
