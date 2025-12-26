@@ -6,47 +6,58 @@ namespace CodePlayground.Services;
 
 public static class RoadCoordinateExporter
 {
-    public static void ExportRoadsToExcel(string geoJsonPath, string excelPath)
+    public static void ExportRoadsToExcel(string geoJsonPath, string excelPath, int cityId)
     {
         var geoJsonContent = File.ReadAllText(geoJsonPath);
         using var doc = JsonDocument.Parse(geoJsonContent);
         var root = doc.RootElement;
 
         using var wb = new XLWorkbook();
-        var ws = wb.Worksheets.Add("Roads");
+        var ws = wb.Worksheets.Add("Flow");
 
-        // Заголовки
         ws.Cell(1, 1).Value = "Id";
-        ws.Cell(1, 2).Value = "Name";
-        ws.Cell(1, 3).Value = "CoordsJson";
+        ws.Cell(1, 2).Value = "VehicleType";
+        ws.Cell(1, 3).Value = "MaxTrafficIntensity";
+        ws.Cell(1, 4).Value = "AverageSpeed";
+        ws.Cell(1, 5).Value = "Points";
+        ws.Cell(1, 6).Value = "CityId";
 
-        int row = 2;
+        var row = 2;
 
         if (root.TryGetProperty("features", out var features))
         {
             foreach (var feature in features.EnumerateArray())
             {
                 if (!feature.TryGetProperty("geometry", out var geometry))
+                {
                     continue;
+                }
 
                 if (!geometry.TryGetProperty("type", out var typeProp) ||
                     !geometry.TryGetProperty("coordinates", out var coordsProp))
+                {
                     continue;
+                }
 
                 var type = typeProp.GetString();
                 if (type != "LineString" && type != "MultiLineString")
+                {
                     continue;
+                }
 
-                // id / name дороги из properties
-                string id = "";
-                string name = "";
+                var name = "";
 
                 if (feature.TryGetProperty("properties", out var props))
                 {
-                    if (props.TryGetProperty("id", out var idProp))
-                        id = idProp.GetString() ?? "";
                     if (props.TryGetProperty("name", out var nameProp))
+                    {
                         name = nameProp.GetString() ?? "";
+                    }
+                }
+
+                if (name == "")
+                {
+                    continue;
                 }
 
                 var coords = new List<Coordinate>();
@@ -80,7 +91,9 @@ public static class RoadCoordinateExporter
                 }
 
                 if (coords.Count == 0)
+                {
                     continue;
+                }
 
                 var json = JsonSerializer.Serialize(
                     coords,
@@ -90,9 +103,12 @@ public static class RoadCoordinateExporter
                         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
                     });
 
-                ws.Cell(row, 1).Value = id;
-                ws.Cell(row, 2).Value = name;
-                ws.Cell(row, 3).Value = json;
+                ws.Cell(row, 1).Value = name;
+                ws.Cell(row, 2).Value = 1;
+                ws.Cell(row, 3).Value = 35;
+                ws.Cell(row, 4).Value = 40;
+                ws.Cell(row, 5).Value = json;
+                ws.Cell(row, 6).Value = cityId; 
                 row++;
             }
         }
