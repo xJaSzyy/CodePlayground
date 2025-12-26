@@ -1,6 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using ClosedXML.Excel;
+using CodePlayground.Extensions;
 
 namespace CodePlayground.Services;
 
@@ -26,59 +27,60 @@ public static class RoadCoordinateExporter
 
         if (root.TryGetProperty("features", out var features))
         {
-            foreach (var feature in features.EnumerateArray())
+            var groupedFeatures = features
+                .EnumerateArray()
+                .Select(f =>
+                {
+                    JsonElement propsElement;
+                    JsonElement nameElement = default;
+
+                    var hasName = f.TryGetProperty("properties", out propsElement)
+                                  && propsElement.TryGetProperty("name", out nameElement);
+
+                    var key = hasName && nameElement.ValueKind == JsonValueKind.String
+                        ? nameElement.GetString()
+                        : "";
+
+                    return new { Feature = f, Name = key };
+                })
+                .GroupBy(x => x.Name)
+                .ToList();
+
+            var dict = new Dictionary<string, List<List<Coordinate>>>();
+            
+            foreach (var group in groupedFeatures)
             {
-                if (!feature.TryGetProperty("geometry", out var geometry))
+                var list = new List<List<Coordinate>>();
+                
+                foreach (var item in group)
                 {
-                    continue;
-                }
-
-                if (!geometry.TryGetProperty("type", out var typeProp) ||
-                    !geometry.TryGetProperty("coordinates", out var coordsProp))
-                {
-                    continue;
-                }
-
-                var type = typeProp.GetString();
-                if (type != "LineString" && type != "MultiLineString")
-                {
-                    continue;
-                }
-
-                var name = "";
-
-                if (feature.TryGetProperty("properties", out var props))
-                {
-                    if (props.TryGetProperty("name", out var nameProp))
+                    if (!item.Feature.TryGetProperty("geometry", out var geometry))
                     {
-                        name = nameProp.GetString() ?? "";
+                        continue;
                     }
-                }
 
-                if (name == "")
-                {
-                    continue;
-                }
-
-                var coords = new List<Coordinate>();
-
-                if (type == "LineString")
-                {
-                    foreach (var c in coordsProp.EnumerateArray())
+                    if (!geometry.TryGetProperty("type", out var typeProp) ||
+                        !geometry.TryGetProperty("coordinates", out var coordsProp))
                     {
-                        if (c.GetArrayLength() < 2) continue;
-                        coords.Add(new Coordinate
-                        {
-                            Lon = c[0].GetDouble(),
-                            Lat = c[1].GetDouble()
-                        });
+                        continue;
                     }
-                }
-                else if (type == "MultiLineString")
-                {
-                    foreach (var line in coordsProp.EnumerateArray())
+
+                    var type = typeProp.GetString();
+                    if (type != "LineString" && type != "MultiLineString")
                     {
-                        foreach (var c in line.EnumerateArray())
+                        continue;
+                    }
+
+                    if (string.IsNullOrEmpty(item.Name))
+                    {
+                        continue;
+                    }
+
+                    var coords = new List<Coordinate>();
+
+                    if (type == "LineString")
+                    {
+                        foreach (var c in coordsProp.EnumerateArray())
                         {
                             if (c.GetArrayLength() < 2) continue;
                             coords.Add(new Coordinate
@@ -88,27 +90,62 @@ public static class RoadCoordinateExporter
                             });
                         }
                     }
+                    else if (type == "MultiLineString")
+                    {
+                        foreach (var line in coordsProp.EnumerateArray())
+                        {
+                            foreach (var c in line.EnumerateArray())
+                            {
+                                if (c.GetArrayLength() < 2) continue;
+                                coords.Add(new Coordinate
+                                {
+                                    Lon = c[0].GetDouble(),
+                                    Lat = c[1].GetDouble()
+                                });
+                            }
+                        }
+                    }
+
+                    if (coords.Count == 0)
+                    {
+                        continue;
+                    }
+
+                    list.Add(coords);
+                    /*if (!dict.ContainsKey(item.Name))
+                    {
+                        dict.Add(item.Name, new List<List<Coordinate>>
+                        {
+                            coords
+                        });
+                    }
+                    else
+                    {
+                        dict[item.Name].Add(coords);
+                    }*/
                 }
 
-                if (coords.Count == 0)
+                if (list.Count == 0)
                 {
                     continue;
                 }
 
+                var merged = GeoUtils.MergeAll(list);
+                
                 var json = JsonSerializer.Serialize(
-                    coords,
+                    merged,
                     new JsonSerializerOptions
                     {
                         PropertyNamingPolicy = null,
                         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
                     });
 
-                ws.Cell(row, 1).Value = name;
+                ws.Cell(row, 1).Value = row - 1;
                 ws.Cell(row, 2).Value = 1;
                 ws.Cell(row, 3).Value = 35;
                 ws.Cell(row, 4).Value = 40;
                 ws.Cell(row, 5).Value = json;
-                ws.Cell(row, 6).Value = cityId; 
+                ws.Cell(row, 6).Value = cityId;
                 row++;
             }
         }
