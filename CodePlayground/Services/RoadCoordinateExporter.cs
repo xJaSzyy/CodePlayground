@@ -43,7 +43,7 @@ public static class RoadCoordinateExporter
 
                     return new { Feature = f, Name = key };
                 })
-                .GroupBy(x => x.Name)
+                .GroupBy(x => x.Name.ToLower())
                 .ToList();
 
             foreach (var group in groupedFeatures)
@@ -149,7 +149,7 @@ public static class RoadCoordinateExporter
         wb.SaveAs(excelPath);
     }
 
-    private static bool IsNormalLength(List<Coordinates> list, double minLength = 20)
+    private static bool IsNormalLength(List<Coordinates> list, double minLength = 25)
     {
         float length = 0;
         for (var i = 1; i < list.Count; i++)
