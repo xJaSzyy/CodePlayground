@@ -22,6 +22,7 @@ public static class RoadCoordinateExporter
         ws.Cell(1, 4).Value = "AverageSpeed";
         ws.Cell(1, 5).Value = "Points";
         ws.Cell(1, 6).Value = "CityId";
+        ws.Cell(1, 7).Value = "StreetName";
 
         var row = 2;
 
@@ -31,10 +32,9 @@ public static class RoadCoordinateExporter
                 .EnumerateArray()
                 .Select(f =>
                 {
-                    JsonElement propsElement;
                     JsonElement nameElement = default;
 
-                    var hasName = f.TryGetProperty("properties", out propsElement)
+                    var hasName = f.TryGetProperty("properties", out var propsElement)
                                   && propsElement.TryGetProperty("name", out nameElement);
 
                     var key = hasName && nameElement.ValueKind == JsonValueKind.String
@@ -46,11 +46,9 @@ public static class RoadCoordinateExporter
                 .GroupBy(x => x.Name)
                 .ToList();
 
-            var dict = new Dictionary<string, List<List<Coordinate>>>();
-            
             foreach (var group in groupedFeatures)
             {
-                var list = new List<List<Coordinate>>();
+                var list = new List<List<Coordinates>>();
                 
                 foreach (var item in group)
                 {
@@ -76,14 +74,14 @@ public static class RoadCoordinateExporter
                         continue;
                     }
 
-                    var coords = new List<Coordinate>();
+                    var coords = new List<Coordinates>();
 
                     if (type == "LineString")
                     {
                         foreach (var c in coordsProp.EnumerateArray())
                         {
                             if (c.GetArrayLength() < 2) continue;
-                            coords.Add(new Coordinate
+                            coords.Add(new Coordinates
                             {
                                 Lon = c[0].GetDouble(),
                                 Lat = c[1].GetDouble()
@@ -97,7 +95,7 @@ public static class RoadCoordinateExporter
                             foreach (var c in line.EnumerateArray())
                             {
                                 if (c.GetArrayLength() < 2) continue;
-                                coords.Add(new Coordinate
+                                coords.Add(new Coordinates
                                 {
                                     Lon = c[0].GetDouble(),
                                     Lat = c[1].GetDouble()
@@ -112,25 +110,19 @@ public static class RoadCoordinateExporter
                     }
 
                     list.Add(coords);
-                    /*if (!dict.ContainsKey(item.Name))
-                    {
-                        dict.Add(item.Name, new List<List<Coordinate>>
-                        {
-                            coords
-                        });
-                    }
-                    else
-                    {
-                        dict[item.Name].Add(coords);
-                    }*/
                 }
 
                 if (list.Count == 0)
                 {
                     continue;
                 }
-
+                
                 var merged = GeoUtils.MergeAll(list);
+
+                if (!IsNormalLength(merged))
+                {
+                    continue;
+                }
                 
                 var json = JsonSerializer.Serialize(
                     merged,
@@ -146,6 +138,7 @@ public static class RoadCoordinateExporter
                 ws.Cell(row, 4).Value = 40;
                 ws.Cell(row, 5).Value = json;
                 ws.Cell(row, 6).Value = cityId;
+                ws.Cell(row, 7).Value = group.FirstOrDefault()!.Name;
                 row++;
             }
         }
@@ -153,9 +146,20 @@ public static class RoadCoordinateExporter
         ws.Columns().AdjustToContents();
         wb.SaveAs(excelPath);
     }
+
+    private static bool IsNormalLength(List<Coordinates> list, double minLength = 20)
+    {
+        float length = 0;
+        for (var i = 1; i < list.Count; i++)
+        {
+            length += (float)GeoUtils.DistanceMeters(list[i - 1], list[i]);
+        }
+
+        return length >= minLength;
+    }
 }
 
-public class Coordinate
+public class Coordinates
 {
     public double Lon { get; set; }
     public double Lat { get; set; }

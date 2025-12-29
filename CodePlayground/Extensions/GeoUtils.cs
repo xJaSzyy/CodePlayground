@@ -6,7 +6,7 @@ public static class GeoUtils
 {
     private const double EarthRadiusMeters = 6371000;
 
-    public static double DistanceMeters(Coordinate a, Coordinate b)
+    public static double DistanceMeters(Coordinates a, Coordinates b)
     {
         var lat1 = DegreesToRadians(a.Lat);
         var lon1 = DegreesToRadians(a.Lon);
@@ -30,13 +30,12 @@ public static class GeoUtils
 
     private static double DegreesToRadians(double deg) => deg * Math.PI / 180.0;
 
-    public static List<Coordinate> MergeAll(List<List<Coordinate>> lists, double maxGapMeters = 30)
+    public static List<Coordinates> MergeAll(List<List<Coordinates>> lists, double maxGapMeters = 0)
     {
         if (lists.Count == 0)
-            return new List<Coordinate>();
+            return new List<Coordinates>();
 
-        // Берём первую как стартовую цепочку
-        var chain = new List<Coordinate>(lists[0]);
+        var chain = new List<Coordinates>(lists[0]);
         lists.RemoveAt(0);
 
         while (lists.Count > 0)
@@ -96,7 +95,6 @@ public static class GeoUtils
                 }
             }
 
-            // Если ближайший зазор слишком большой — можно остановиться
             if (bestIndex == -1 || bestDist > maxGapMeters)
                 break;
 
@@ -108,18 +106,19 @@ public static class GeoUtils
 
             if (bestAttachToStart)
             {
-                // приклеиваем к началу (чтобы линии шли подряд)
-                // убираем дублирующую вершину, если почти совпадает
-                if (GeoUtils.DistanceMeters(best[^1], chainStart) < 1e-3)
+                if (DistanceMeters(best[^1], chainStart) < 1e-3)
+                {
                     best.RemoveAt(best.Count - 1);
+                }
 
                 chain.InsertRange(0, best);
             }
             else
             {
-                // приклеиваем к концу
-                if (GeoUtils.DistanceMeters(chainEnd, best[0]) < 1e-3)
+                if (DistanceMeters(chainEnd, best[0]) < 1e-3)
+                {
                     best.RemoveAt(0);
+                }
 
                 chain.AddRange(best);
             }
