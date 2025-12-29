@@ -119,6 +119,8 @@ public static class RoadCoordinateExporter
                 
                 var merged = GeoUtils.MergeAll(list);
 
+                merged = GeoUtils.RemoveDuplicates(merged);
+                
                 if (!IsNormalLength(merged))
                 {
                     continue;

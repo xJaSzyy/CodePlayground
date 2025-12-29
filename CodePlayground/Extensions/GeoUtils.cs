@@ -54,38 +54,34 @@ public static class GeoUtils
                 var segStart = seg[0];
                 var segEnd = seg[^1];
 
-                // цепочка.начало ↔ сегмент.начало
-                double d = GeoUtils.DistanceMeters(chainStart, segStart);
+                double d = DistanceMeters(chainStart, segStart);
                 if (d < bestDist)
                 {
                     bestDist = d;
                     bestIndex = i;
-                    bestReverse = true; // надо развернуть сегмент (чтоб конец к началу цепочки)
+                    bestReverse = true; 
                     bestAttachToStart = true;
                 }
 
-                // цепочка.начало ↔ сегмент.конец
-                d = GeoUtils.DistanceMeters(chainStart, segEnd);
+                d = DistanceMeters(chainStart, segEnd);
                 if (d < bestDist)
                 {
                     bestDist = d;
                     bestIndex = i;
-                    bestReverse = false; // уже конец сегмента
+                    bestReverse = false; 
                     bestAttachToStart = true;
                 }
 
-                // цепочка.конец ↔ сегмент.начало
-                d = GeoUtils.DistanceMeters(chainEnd, segStart);
+                d = DistanceMeters(chainEnd, segStart);
                 if (d < bestDist)
                 {
                     bestDist = d;
                     bestIndex = i;
                     bestReverse = false;
-                    bestAttachToStart = false; // к концу цепочки
+                    bestAttachToStart = false; 
                 }
-
-                // цепочка.конец ↔ сегмент.конец
-                d = GeoUtils.DistanceMeters(chainEnd, segEnd);
+                
+                d = DistanceMeters(chainEnd, segEnd);
                 if (d < bestDist)
                 {
                     bestDist = d;
@@ -125,5 +121,29 @@ public static class GeoUtils
         }
 
         return chain;
+    }
+
+    public static List<Coordinates> RemoveDuplicates(List<Coordinates> list)
+    {
+        var maxDistance = 0d;
+        
+        var startPoint = list[0];
+        var endPoint = list[^1];
+        
+        foreach (var points in list)
+        {
+            if (DistanceMeters(points, endPoint) > maxDistance)
+            {
+                maxDistance = DistanceMeters(points, endPoint);
+            }
+        }
+
+        while (DistanceMeters(startPoint, endPoint) != maxDistance)
+        {
+            list.RemoveAt(0);
+            startPoint = list[0];
+        }
+        
+        return list;
     }
 }
